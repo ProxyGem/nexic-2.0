@@ -834,7 +834,7 @@ function ProfileView({user,profile,targetUid,onClose,isOwn,onWrite,onBlock,isBlo
           <AvSquare src={displayAvatar} size={110} frame={frozen?null:data.equippedFrame} frozen={frozen} username={data.username}/>
           <div className="profile-name">{displayName}<Badges uid={data.uid||targetUid}/></div>
           {!frozen&&<div className="profile-handle">@{data.user}</div>}
-          <div className="profile-status" style={{color:online?'var(--success)':'var(--t-faint)'}}>{frozen?'Заморожен':(isBlocked?'был(а) давно':(online?'В сети':u.lastSeen(data.lastSeen,data.design?.showLastSeen!==false)))}</div>
+          <div className="profile-status" style={{color:online?'var(--success)':'var(--t-faint)'}}>{frozen?'Заморожен':(isBlocked?'был(а) недавно':(online?'В сети':u.lastSeen(data.lastSeen,data.design?.showLastSeen!==false)))}</div>
           {data.description&&!frozen&&<div className="profile-bio">{data.description}</div>}
         </div>
       </div>
