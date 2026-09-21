@@ -1,0 +1,2576 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#000000">
+<title>Nexic</title>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+<script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
+<style>
+:root{
+  --bg-void:#000000;--bg-deep:#050505;--bg-base:#0a0a0a;
+  --bg-elev-1:rgba(255,255,255,.024);--bg-elev-2:rgba(255,255,255,.045);
+  --bg-elev-3:rgba(255,255,255,.07);--bg-elev-4:rgba(255,255,255,.1);
+  --glass-1:rgba(255,255,255,.035);--glass-2:rgba(255,255,255,.055);
+  --glass-3:rgba(255,255,255,.08);--glass-border:rgba(255,255,255,.08);
+  --glass-border-strong:rgba(255,255,255,.14);--glass-highlight:rgba(255,255,255,.14);
+  --glass-blur:blur(40px) saturate(180%);--glass-blur-heavy:blur(60px) saturate(200%);
+  --t-hi:#ffffff;--t-mid:rgba(255,255,255,.72);--t-lo:rgba(255,255,255,.48);--t-faint:rgba(255,255,255,.28);
+  --accent:#ffffff;--accent-inv:#000000;--accent-soft:rgba(255,255,255,.1);--accent-glow:rgba(255,255,255,.22);
+  --success:#4ade80;--success-soft:rgba(74,222,128,.12);
+  --danger:#ff453a;--danger-soft:rgba(255,69,58,.12);
+  --warning:#ffd60a;--warning-soft:rgba(255,214,10,.12);
+  --info:#64d2ff;--info-soft:rgba(100,210,255,.12);
+  --diamond:#e0e7ff;--diamond-soft:rgba(224,231,255,.1);
+  --r-xs:8px;--r-sm:12px;--r-md:16px;--r-lg:22px;--r-xl:28px;--r-2xl:34px;--r-full:999px;
+  --sh-sm:0 2px 8px rgba(0,0,0,.4);--sh-md:0 8px 28px rgba(0,0,0,.55);
+  --sh-lg:0 20px 60px rgba(0,0,0,.7);
+  --ease-spring:cubic-bezier(.34,1.56,.64,1);--ease-out:cubic-bezier(.16,1,.3,1);
+  --dur-fast:.15s;--dur:.28s;--dur-slow:.45s;
+  --sidebar-w:340px;--header-h:64px;
+}
+html[data-theme="light"]{
+  --bg-void:#f5f5f7;--bg-deep:#ffffff;--bg-base:#ffffff;
+  --bg-elev-1:rgba(0,0,0,.025);--bg-elev-2:rgba(0,0,0,.045);--bg-elev-3:rgba(0,0,0,.07);--bg-elev-4:rgba(0,0,0,.1);
+  --glass-1:rgba(255,255,255,.7);--glass-2:rgba(255,255,255,.8);--glass-3:rgba(255,255,255,.9);
+  --glass-border:rgba(0,0,0,.08);--glass-border-strong:rgba(0,0,0,.14);
+  --t-hi:#000000;--t-mid:rgba(0,0,0,.72);--t-lo:rgba(0,0,0,.48);--t-faint:rgba(0,0,0,.28);
+  --accent:#000000;--accent-inv:#ffffff;--accent-soft:rgba(0,0,0,.06);--accent-glow:rgba(0,0,0,.12);
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overflow:hidden}
+body{background:var(--bg-void);color:var(--t-hi);font-family:Inter,-apple-system,BlinkMacSystemFont,system-ui,sans-serif;font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased;letter-spacing:-.01em;overscroll-behavior:none;transition:background .3s,color .3s}
+#root{height:100vh;height:100dvh}
+.material-symbols-rounded{font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24;user-select:none}
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:10px}
+html[data-theme="light"] ::-webkit-scrollbar-thumb{background:rgba(0,0,0,.15)}
+::selection{background:var(--accent);color:var(--accent-inv)}
+.flex{display:flex}.fc{flex-direction:column}.ic{align-items:center}.jb{justify-content:space-between}.jc{justify-content:center}
+.f1{flex:1;min-width:0;min-height:0}
+.g1{gap:4px}.g2{gap:8px}.g3{gap:12px}.g4{gap:16px}
+.tr{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+@keyframes scaleIn{from{opacity:0;transform:scale(.94)}to{opacity:1;transform:scale(1)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes voicePulse{0%{transform:scale(1);opacity:.5}100%{transform:scale(1.5);opacity:0}}
+.app{display:flex;height:100vh;height:100dvh;overflow:hidden;background:var(--bg-void);position:relative;transition:background .3s}
+.app::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 80% 50% at 50% -10%,rgba(255,255,255,.03),transparent),radial-gradient(ellipse 60% 40% at 90% 100%,rgba(255,255,255,.02),transparent);pointer-events:none;z-index:0}
+html[data-theme="light"] .app::before{background:radial-gradient(ellipse 80% 50% at 50% -10%,rgba(0,0,0,.03),transparent),radial-gradient(ellipse 60% 40% at 90% 100%,rgba(0,0,0,.02),transparent)}
+.sidebar{width:var(--sidebar-w);background:var(--glass-1);backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur);border-right:1px solid var(--glass-border);display:flex;flex-direction:column;flex-shrink:0;position:relative;z-index:2;transition:background .3s,border-color .3s}
+.sidebar-header{padding:20px 20px 12px;display:flex;align-items:center;gap:12px}
+.sidebar-logo{font-size:24px;font-weight:900;letter-spacing:-.04em;background:linear-gradient(135deg,var(--t-hi) 0%,var(--t-lo) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.search-wrap{padding:4px 16px 12px}
+.search-box{display:flex;align-items:center;gap:10px;background:var(--bg-elev-2);border:1px solid var(--glass-border);border-radius:var(--r-full);padding:10px 16px;transition:all var(--dur) var(--ease-out)}
+.search-box:focus-within{background:var(--bg-elev-3);border-color:var(--glass-border-strong);box-shadow:0 0 0 3px var(--accent-soft)}
+.search-box input{flex:1;background:transparent;border:none;outline:none;color:var(--t-hi);font-size:14px;font-family:inherit}
+.search-box input::placeholder{color:var(--t-faint)}
+.chat-list{flex:1;overflow-y:auto;overflow-x:hidden;padding:4px 12px 100px;scroll-behavior:smooth}
+.chat-item{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:var(--r-md);cursor:pointer;transition:all var(--dur) var(--ease-out);position:relative;animation:fadeUp .3s var(--ease-out) both}
+.chat-item:hover{background:var(--bg-elev-2)}
+.chat-item:active{transform:scale(.985)}
+.chat-item.active{background:var(--glass-2);border:1px solid var(--glass-border);box-shadow:var(--sh-sm)}
+.chat-item-body{flex:1;min-width:0}
+.chat-item-name{font-weight:600;font-size:14px;display:flex;align-items:center;gap:5px;color:var(--t-hi)}
+.chat-item-preview{font-size:13px;color:var(--t-lo);margin-top:2px;display:flex;align-items:center;gap:4px}
+.dock{position:absolute;bottom:16px;left:16px;right:16px;background:var(--glass-2);backdrop-filter:var(--glass-blur-heavy);-webkit-backdrop-filter:var(--glass-blur-heavy);border:1px solid var(--glass-border);border-radius:var(--r-xl);display:flex;justify-content:space-around;align-items:center;padding:8px;z-index:10;box-shadow:var(--sh-lg),inset 0 1px 0 var(--glass-highlight)}
+.dock-btn{flex:1;height:44px;border-radius:var(--r-md);background:transparent;border:none;color:var(--t-lo);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all var(--dur) var(--ease-spring);position:relative}
+.dock-btn:hover{background:var(--bg-elev-2);color:var(--t-hi)}
+.dock-btn:active{transform:scale(.9)}
+.dock-btn .material-symbols-rounded{font-size:22px}
+.dock-btn .badge{position:absolute;top:4px;right:calc(50% - 14px);min-width:16px;height:16px;padding:0 4px;border-radius:var(--r-full);background:var(--danger);color:#fff;font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center;border:2px solid var(--bg-void)}
+.main{flex:1;display:flex;flex-direction:column;min-width:0;background:var(--bg-void);position:relative;z-index:1;transition:background .3s}
+.topbar{height:var(--header-h);padding:0 20px;display:flex;align-items:center;gap:12px;background:var(--glass-1);backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur);border-bottom:1px solid var(--glass-border);flex-shrink:0;position:relative;z-index:5}
+.ibtn{width:40px;height:40px;border-radius:var(--r-full);background:transparent;border:none;color:var(--t-mid);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all var(--dur) var(--ease-spring);flex-shrink:0;position:relative}
+.ibtn:hover{background:var(--bg-elev-2);color:var(--t-hi)}
+.ibtn:active{transform:scale(.9)}
+.av{border-radius:var(--r-full);object-fit:cover;background:var(--bg-elev-2);flex-shrink:0;display:block}
+.av-wrap{position:relative;flex-shrink:0}
+.av-status{position:absolute;bottom:0;right:0;width:12px;height:12px;border-radius:var(--r-full);border:2.5px solid var(--bg-void);background:var(--t-faint)}
+.av-status.online{background:var(--success);box-shadow:0 0 8px var(--success)}
+.av-sq-wrap{position:relative;display:inline-block}
+.av-sq-frame{position:absolute;top:-10px;left:-10px;right:-10px;bottom:-10px;background-size:100% 100%;background-position:center;background-repeat:no-repeat;pointer-events:none;z-index:10}
+.av-sq{position:relative;z-index:5;border-radius:var(--r-lg);object-fit:cover;background:var(--bg-elev-2);display:block}
+.av-edit-btn{position:absolute;bottom:-6px;right:-6px;background:var(--accent);color:var(--accent-inv);width:30px;height:30px;border-radius:var(--r-full);display:flex;align-items:center;justify-content:center;cursor:pointer;border:3px solid var(--bg-void);z-index:20;transition:all var(--dur) var(--ease-spring)}
+.messages{flex:1;overflow-y:auto;overflow-x:hidden;padding:20px 24px 12px;display:flex;flex-direction:column;gap:2px;scroll-behavior:smooth}
+.msg-row{display:flex;gap:8px;max-width:70%;animation:fadeUp .25s var(--ease-out) both}
+.msg-row.own{align-self:flex-end;flex-direction:row-reverse}
+.msg-row.other{align-self:flex-start}
+.msg-content{min-width:0;max-width:100%}
+.msg-bubble{padding:9px 14px;border-radius:var(--r-lg);font-size:14.5px;line-height:1.45;word-wrap:break-word;position:relative;border:1px solid var(--glass-border);backdrop-filter:blur(20px);transition:all var(--dur) var(--ease-out);--bubble-bg-alpha:1}
+.msg-row.own .msg-bubble{background:rgba(255,255,255,var(--bubble-bg-alpha))!important;color:var(--accent-inv);border-color:transparent;border-bottom-right-radius:6px}
+html[data-theme="light"] .msg-row.own .msg-bubble{background:rgba(0,0,0,var(--bubble-bg-alpha))!important;color:#fff}
+.msg-row.other .msg-bubble{background:rgba(255,255,255,calc(.07 * var(--bubble-bg-alpha)))!important;border-bottom-left-radius:6px}
+html[data-theme="light"] .msg-row.other .msg-bubble{background:rgba(0,0,0,calc(.05 * var(--bubble-bg-alpha)))!important}
+.msg-meta{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--t-faint);margin-bottom:4px;padding:0 4px;font-weight:500}
+.msg-row.own .msg-meta{justify-content:flex-end}
+.msg-time{font-size:10.5px;opacity:.6;margin-left:auto;padding-left:8px;white-space:nowrap;font-variant-numeric:tabular-nums}
+.msg-actions{position:absolute;top:-40px;right:0;display:flex;gap:2px;background:var(--glass-2);backdrop-filter:var(--glass-blur-heavy);border:1px solid var(--glass-border);border-radius:var(--r-full);padding:4px;opacity:0;transform:translateY(4px);transition:all var(--dur) var(--ease-spring);box-shadow:var(--sh-md);z-index:10}
+.msg-bubble:hover .msg-actions{opacity:1;transform:translateY(0)}
+.msg-actions button{width:30px;height:30px;border-radius:var(--r-full);background:transparent;border:none;color:var(--t-mid);display:flex;align-items:center;justify-content:center;cursor:pointer}
+.msg-actions button:hover{background:var(--bg-elev-3);color:var(--t-hi)}
+.reply-quote{padding:7px 11px;border-left:3px solid var(--danger);background:rgba(255,69,58,.08);border-radius:var(--r-xs);margin-bottom:6px;font-size:12.5px}
+.reply-quote .rq-author{font-weight:600;color:var(--danger);margin-bottom:2px}
+.reply-quote .rq-text{color:var(--t-lo);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.reactions{display:flex;gap:4px;margin-top:5px;flex-wrap:wrap}
+.reaction-chip{background:var(--bg-elev-2);border:1px solid var(--glass-border);border-radius:var(--r-full);padding:3px 9px;font-size:12.5px;display:flex;align-items:center;gap:4px;cursor:pointer;transition:all var(--dur) var(--ease-spring);color:var(--t-hi);font-family:inherit}
+.reaction-chip.mine{border-color:var(--accent);background:var(--accent-soft)}
+.input-bar{padding:12px 20px 16px;background:var(--glass-1);backdrop-filter:var(--glass-blur);border-top:1px solid var(--glass-border);flex-shrink:0;display:flex;align-items:flex-end;gap:10px;position:relative;z-index:5}
+.input-wrap{flex:1;background:var(--bg-elev-2);border:1px solid var(--glass-border);border-radius:var(--r-lg);padding:10px 16px;display:flex;align-items:flex-end;gap:10px;transition:all var(--dur) var(--ease-out);min-width:0}
+.input-wrap:focus-within{border-color:var(--glass-border-strong);background:var(--bg-elev-3);box-shadow:0 0 0 3px var(--accent-soft)}
+.msg-input{flex:1;background:transparent;border:none;outline:none;color:var(--t-hi);font-size:14.5px;font-family:inherit;resize:none;max-height:140px;min-height:24px;line-height:1.45;padding:2px 0}
+.msg-input::placeholder{color:var(--t-faint)}
+.send-btn{width:42px;height:42px;border-radius:var(--r-full);background:var(--accent);color:var(--accent-inv);border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all var(--dur) var(--ease-spring);flex-shrink:0}
+.send-btn:active{transform:scale(.92)}
+.send-btn.secondary{background:var(--bg-elev-3);color:var(--t-hi)}
+.empty{flex:1;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:16px;color:var(--t-faint);padding:40px;text-align:center}
+.empty .material-symbols-rounded{font-size:72px;opacity:.25}
+.empty-title{font-size:20px;font-weight:700;color:var(--t-mid)}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.72);backdrop-filter:blur(20px);z-index:1000;display:flex;align-items:center;justify-content:center;padding:20px;animation:fadeIn .2s var(--ease-out)}
+html[data-theme="light"] .modal-overlay{background:rgba(0,0,0,.4)}
+.modal{background:var(--glass-2);backdrop-filter:var(--glass-blur-heavy);border:1px solid var(--glass-border-strong);border-radius:var(--r-2xl);width:100%;max-width:520px;max-height:88vh;overflow:hidden;box-shadow:var(--sh-lg);animation:scaleIn .3s var(--ease-spring);display:flex;flex-direction:column}
+.modal-header{padding:20px 24px 16px;display:flex;align-items:center;gap:12px;flex-shrink:0}
+.modal-title{font-size:19px;font-weight:700;flex:1}
+.modal-body{padding:20px 24px;overflow-y:auto;flex:1}
+.input-field{width:100%;background:var(--bg-elev-2);border:1px solid var(--glass-border);border-radius:var(--r-md);padding:12px 16px;color:var(--t-hi);font-size:14.5px;font-family:inherit;outline:none;transition:all var(--dur) var(--ease-out)}
+.input-field:focus{border-color:var(--glass-border-strong);background:var(--bg-elev-3);box-shadow:0 0 0 3px var(--accent-soft)}
+.input-field::placeholder{color:var(--t-faint)}
+select.input-field{appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:38px;cursor:pointer}
+html[data-theme="light"] select.input-field{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23000000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E")}
+select.input-field option{background:var(--bg-deep);color:var(--t-hi)}
+.label{font-size:12px;font-weight:600;color:var(--t-lo);display:block;margin-bottom:7px;letter-spacing:.02em;text-transform:uppercase}
+.btn{padding:11px 20px;border-radius:var(--r-md);border:none;font-size:14px;font-weight:600;font-family:inherit;cursor:pointer;transition:all var(--dur) var(--ease-spring);display:inline-flex;align-items:center;justify-content:center;gap:8px}
+.btn:active{transform:scale(.96)}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.btn-primary{background:var(--accent);color:var(--accent-inv)}
+.btn-secondary{background:var(--bg-elev-3);color:var(--t-hi);border:1px solid var(--glass-border)}
+.btn-danger{background:var(--danger-soft);color:var(--danger)}
+.btn-success{background:var(--success-soft);color:var(--success)}
+.btn-full{width:100%}
+.btn-sm{padding:7px 14px;font-size:13px}
+.btn-xs{padding:5px 10px;font-size:11.5px;border-radius:var(--r-sm)}
+.toggle{position:relative;width:48px;height:28px;background:var(--bg-elev-3);border-radius:var(--r-full);cursor:pointer;transition:background var(--dur) var(--ease-out);border:none;flex-shrink:0;padding:0}
+.toggle::after{content:'';position:absolute;top:3px;left:3px;width:22px;height:22px;background:#fff;border-radius:var(--r-full);transition:transform var(--dur) var(--ease-spring);box-shadow:0 2px 8px rgba(0,0,0,.3)}
+.toggle.on{background:var(--accent)}
+.toggle.on::after{transform:translateX(20px);background:var(--accent-inv)}
+.tabs{display:flex;gap:4px;padding:4px;background:var(--bg-elev-2);border-radius:var(--r-md);overflow-x:auto;flex-shrink:0;justify-content:center}
+.tab{padding:8px 16px;border-radius:var(--r-sm);background:transparent;border:none;color:var(--t-lo);font-size:13.5px;font-weight:600;cursor:pointer;font-family:inherit;transition:all var(--dur) var(--ease-out);white-space:nowrap;flex:0 0 auto}
+.tab.on{background:var(--glass-3);color:var(--t-hi);box-shadow:var(--sh-sm)}
+input[type="range"]{-webkit-appearance:none;width:100%;height:4px;background:var(--bg-elev-3);border-radius:4px;outline:none;cursor:pointer}
+input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;background:var(--accent);border-radius:var(--r-full);cursor:pointer}
+.section-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--t-faint);padding:16px 4px 8px}
+.card{background:var(--bg-elev-1);border:1px solid var(--glass-border);border-radius:var(--r-lg);padding:16px;transition:all var(--dur) var(--ease-out)}
+.profile-hero{padding:40px 24px 32px;text-align:center;border-bottom:1px solid var(--glass-border);position:relative;overflow:hidden}
+.profile-hero-bg{position:absolute;inset:0;background-size:cover;background-position:center;opacity:.25;z-index:0}
+.profile-hero-content{position:relative;z-index:1}
+.profile-name{font-size:24px;font-weight:800;margin-top:16px;display:flex;align-items:center;justify-content:center;gap:6px}
+.profile-handle{font-size:14px;color:var(--t-lo);margin-top:4px}
+.profile-status{font-size:13px;margin-top:6px;font-weight:500}
+.profile-bio{font-size:14px;color:var(--t-mid);margin-top:12px;max-width:400px;margin-left:auto;margin-right:auto;line-height:1.55}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:12px}
+.grid-item{background:var(--bg-elev-1);border:1px solid var(--glass-border);border-radius:var(--r-lg);padding:12px;text-align:center;transition:all var(--dur) var(--ease-spring);cursor:pointer;position:relative;overflow:hidden}
+.grid-item-img{width:100%;height:88px;object-fit:contain;background:rgba(0,0,0,.25);border-radius:var(--r-sm);margin-bottom:8px}
+html[data-theme="light"] .grid-item-img{background:rgba(0,0,0,.05)}
+.grid-item-name{font-size:12px;font-weight:600;margin-bottom:4px}
+.grid-item-price{font-size:13px;font-weight:700;color:var(--diamond);display:flex;align-items:center;justify-content:center;gap:4px}
+html[data-theme="light"] .grid-item-price{color:#6366f1}
+.grid-item-badge{position:absolute;top:8px;right:8px;background:var(--success);color:#000;font-size:9px;font-weight:700;padding:3px 7px;border-radius:var(--r-full)}
+.diamond{display:inline-block;width:14px;height:14px;background:linear-gradient(135deg,#e0e7ff,#a5b4fc);clip-path:polygon(50% 0%,100% 38%,82% 100%,18% 100%,0% 38%);vertical-align:middle}
+.diamond-badge{display:inline-flex;align-items:center;gap:6px;background:var(--diamond-soft);border:1px solid rgba(224,231,255,.2);border-radius:var(--r-full);padding:5px 12px;font-size:13px;font-weight:700;color:var(--diamond)}
+html[data-theme="light"] .diamond-badge{color:#6366f1;border-color:rgba(99,102,241,.2)}
+.voice-card{background:var(--bg-elev-3);border:1px solid var(--glass-border);border-radius:var(--r-lg);padding:12px 14px;display:flex;align-items:center;gap:12px;min-width:220px;max-width:300px}
+.voice-play{width:42px;height:42px;border-radius:var(--r-full);background:var(--accent);color:var(--accent-inv);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.voice-wave{display:flex;align-items:center;gap:2.5px;height:28px}
+.voice-bar{width:3px;background:var(--t-lo);border-radius:2px;transition:background .1s}
+.voice-meta{display:flex;justify-content:space-between;font-size:11px;color:var(--t-faint);margin-top:5px;font-variant-numeric:tabular-nums}
+.voice-overlay{position:fixed;inset:0;background:rgba(0,0,0,.88);backdrop-filter:blur(24px);z-index:2500;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:24px;padding:24px}
+.voice-circle{width:140px;height:140px;border-radius:var(--r-full);background:var(--danger-soft);display:flex;align-items:center;justify-content:center;position:relative}
+.voice-pulse{position:absolute;inset:0;border-radius:var(--r-full);background:rgba(255,69,58,.3);animation:voicePulse 1.6s ease-out infinite}
+.voice-timer{font-size:38px;font-weight:800;font-variant-numeric:tabular-nums}
+.reaction-picker{position:fixed;background:var(--glass-2);backdrop-filter:var(--glass-blur-heavy);border:1px solid var(--glass-border-strong);border-radius:var(--r-full);padding:8px 10px;display:flex;gap:4px;box-shadow:var(--sh-lg);z-index:2500;animation:scaleIn .2s var(--ease-spring)}
+.reaction-picker button{background:transparent;border:none;font-size:24px;cursor:pointer;padding:6px;border-radius:var(--r-full);transition:all var(--dur) var(--ease-spring);line-height:1}
+.reaction-picker button:hover{background:var(--bg-elev-2);transform:scale(1.25)}
+.context-menu{position:fixed;background:var(--glass-2);backdrop-filter:var(--glass-blur-heavy);border:1px solid var(--glass-border-strong);border-radius:var(--r-lg);padding:6px;box-shadow:var(--sh-lg);z-index:3000;min-width:200px;animation:scaleIn .15s var(--ease-spring)}
+.context-menu button{display:flex;align-items:center;gap:12px;width:100%;padding:11px 14px;background:transparent;border:none;color:var(--t-hi);cursor:pointer;border-radius:var(--r-sm);font-family:inherit;font-size:13.5px;text-align:left;font-weight:500}
+.context-menu button:hover{background:var(--bg-elev-3)}
+.context-menu button.danger{color:var(--danger)}
+.toast-container{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:9999;display:flex;flex-direction:column;gap:8px;pointer-events:none;align-items:center}
+.toast{background:var(--glass-2);backdrop-filter:var(--glass-blur-heavy);border:1px solid var(--glass-border-strong);border-radius:var(--r-full);padding:12px 20px;font-size:13.5px;font-weight:500;box-shadow:var(--sh-lg);animation:fadeUp .3s var(--ease-spring);pointer-events:auto;max-width:90vw;color:var(--t-hi)}
+.spinner{width:20px;height:20px;border:2.5px solid var(--bg-elev-3);border-top-color:var(--accent);border-radius:var(--r-full);animation:spin .7s linear infinite}
+.loading-screen{flex:1;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:16px;color:var(--t-lo)}
+.badge-scam{display:inline-flex;align-items:center;line-height:0}
+.badge-scam img{display:block;height:15px;width:auto;margin:0;padding:0;vertical-align:middle}
+.badge-icon{width:16px;height:16px;object-fit:contain;vertical-align:middle}
+.role-chip{font-size:10px;padding:3px 8px;border-radius:var(--r-full);color:var(--t-mid);background:var(--bg-elev-2);font-weight:600;letter-spacing:.02em}
+.image-viewer{position:fixed;inset:0;background:rgba(0,0,0,.95);backdrop-filter:blur(30px);z-index:2000;display:flex;align-items:center;justify-content:center}
+.image-viewer img{max-width:92vw;max-height:88vh;object-fit:contain;border-radius:var(--r-lg)}
+.image-viewer-actions{position:fixed;top:24px;right:24px;display:flex;gap:8px}
+.image-viewer-actions button{background:var(--glass-2);backdrop-filter:blur(20px);border:1px solid var(--glass-border);color:#fff;width:44px;height:44px;border-radius:var(--r-full);cursor:pointer;display:flex;align-items:center;justify-content:center}
+.mobile-nav{display:none;position:fixed;bottom:0;left:0;right:0;background:var(--glass-2);backdrop-filter:var(--glass-blur-heavy);border-top:1px solid var(--glass-border);z-index:100;padding:6px 8px calc(6px + env(safe-area-inset-bottom))}
+.mobile-nav-item{flex:1;padding:8px;display:flex;flex-direction:column;align-items:center;gap:2px;border-radius:var(--r-md);background:transparent;border:none;color:var(--t-faint);cursor:pointer;font-size:10px;font-family:inherit;font-weight:600;position:relative}
+.mobile-nav-item.on{color:var(--accent)}
+.mobile-nav-item .material-symbols-rounded{font-size:24px}
+.mobile-nav-item .badge{position:absolute;top:4px;right:calc(50% - 16px);min-width:16px;height:16px;padding:0 4px;border-radius:var(--r-full);background:var(--danger);color:#fff;font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center}
+@media (max-width:768px){
+  :root{--sidebar-w:100%;--header-h:56px}
+  .sidebar{width:100%;position:absolute;inset:0;z-index:50;border-right:none}
+  .main{width:100%}
+  .mobile-nav{display:flex}
+  .dock{display:none}
+  .messages{padding:16px 14px 8px}
+  .msg-row{max-width:86%}
+  .modal{max-width:100%;border-radius:var(--r-2xl) var(--r-2xl) 0 0;max-height:92vh;align-self:flex-end}
+  .modal-overlay{align-items:flex-end;padding:0}
+}
+.scroll-area{overflow-y:auto;overflow-x:hidden;scroll-behavior:smooth}
+.auth-screen{min-height:100vh;min-height:100dvh;display:flex;align-items:center;justify-content:center;background:var(--bg-void);padding:20px}
+.auth-card{width:100%;max-width:400px;background:var(--glass-2);backdrop-filter:var(--glass-blur-heavy);border:1px solid var(--glass-border-strong);border-radius:var(--r-2xl);padding:40px 32px;text-align:center;box-shadow:var(--sh-lg)}
+.auth-logo{font-size:42px;font-weight:900;letter-spacing:-.05em;background:linear-gradient(135deg,var(--t-hi) 0%,var(--t-lo) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:8px}
+.auth-subtitle{font-size:13.5px;color:var(--t-lo);margin-bottom:32px;font-weight:500}
+.auth-form{display:flex;flex-direction:column;gap:12px}
+.auth-toggle{margin-top:20px;background:none;border:none;color:var(--t-lo);font-size:13.5px;cursor:pointer;font-family:inherit;font-weight:500}
+.info-row{display:flex;align-items:center;gap:14px;padding:13px 12px;border-radius:var(--r-md);transition:background var(--dur) var(--ease-out);cursor:pointer}
+.info-row:hover{background:var(--bg-elev-1)}
+.info-icon{width:38px;height:38px;border-radius:var(--r-full);background:var(--bg-elev-2);display:flex;align-items:center;justify-content:center;color:var(--t-mid);flex-shrink:0}
+.info-label{font-size:11.5px;color:var(--t-faint);font-weight:500}
+.info-value{font-size:14px;color:var(--t-hi);font-weight:600}
+.settings-row{display:flex;align-items:center;justify-content:space-between;padding:14px 4px;gap:14px;border-bottom:1px solid var(--glass-border)}
+.settings-row:last-child{border-bottom:none}
+.settings-label{font-size:14px;font-weight:500;color:var(--t-hi)}
+.channel-type-option{display:flex;align-items:flex-start;gap:14px;padding:16px;border-radius:var(--r-lg);border:1px solid var(--glass-border);cursor:pointer;transition:all var(--dur) var(--ease-out);margin-bottom:10px;background:var(--bg-elev-1)}
+.channel-type-option.selected{border-color:var(--accent);background:var(--accent-soft);box-shadow:0 0 0 1px var(--accent-glow)}
+.channel-type-radio{width:22px;height:22px;border-radius:var(--r-full);border:2px solid var(--t-lo);flex-shrink:0;margin-top:2px;display:flex;align-items:center;justify-content:center;transition:all var(--dur) var(--ease-spring)}
+.channel-type-option.selected .channel-type-radio{border-color:var(--accent)}
+.channel-type-option.selected .channel-type-radio::after{content:'';width:12px;height:12px;border-radius:var(--r-full);background:var(--accent)}
+.channel-type-title{font-size:14.5px;font-weight:600;margin-bottom:3px}
+.channel-type-desc{font-size:12.5px;color:var(--t-lo);line-height:1.4}
+.channel-icon-badge{display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;border-radius:50%;background:var(--info);color:#000;font-size:11px;margin-left:5px}
+.channel-avatar{display:flex;align-items:center;justify-content:center;width:80px;height:80px;border-radius:50%;background:var(--danger-soft);border:2px dashed var(--danger);cursor:pointer;margin:0 auto 20px;position:relative;overflow:hidden}
+.channel-avatar img{width:100%;height:100%;object-fit:cover}
+.channel-avatar input{position:absolute;inset:0;opacity:0;cursor:pointer}
+.pack-card{background:var(--bg-elev-1);border:1px solid var(--glass-border);border-radius:var(--r-lg);padding:14px;margin-bottom:10px}
+.pack-header{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.pack-title{font-weight:600;font-size:14px;flex:1}
+.pack-count{font-size:12px;color:var(--t-faint)}
+.pack-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(56px,1fr));gap:8px}
+.sticker{width:56px;height:56px;object-fit:contain;background:var(--bg-elev-2);border-radius:var(--r-sm);padding:6px;cursor:pointer;transition:all var(--dur) var(--ease-spring)}
+.sticker:hover{background:var(--bg-elev-3);transform:scale(1.08)}
+.frozen-avatar{background:var(--danger);color:#fff;display:flex;align-items:center;justify-content:center;font-size:inherit;font-weight:800;border-radius:var(--r-full);object-fit:cover}
+.frozen-overlay{position:fixed;inset:0;background:rgba(0,0,0,.92);backdrop-filter:blur(30px);z-index:5000;display:flex;align-items:center;justify-content:center;padding:20px}
+html[data-theme="light"] .frozen-overlay{background:rgba(0,0,0,.5)}
+.frozen-card{background:var(--glass-2);backdrop-filter:var(--glass-blur-heavy);border:1px solid var(--glass-border-strong);border-radius:var(--r-2xl);max-width:420px;width:100%;padding:40px 32px;text-align:center;box-shadow:var(--sh-lg)}
+.frozen-icon{font-size:64px;margin-bottom:16px}
+.frozen-title{font-size:24px;font-weight:800;margin-bottom:12px}
+.frozen-reason{color:var(--t-lo);font-size:14px;margin-bottom:8px;line-height:1.6}
+.frozen-badge{display:inline-flex;align-items:center;gap:6px;background:var(--danger-soft);border:1px solid rgba(255,69,58,.3);border-radius:var(--r-full);padding:8px 16px;font-size:13px;color:var(--danger);font-weight:600;margin-top:16px}
+.blocked-avatar{background:#e53935;color:#fff;display:flex;align-items:center;justify-content:center;font-size:inherit;font-weight:700;border-radius:var(--r-full);object-fit:cover}
+.blocked-item{display:flex;align-items:center;gap:12px;padding:12px;background:var(--bg-elev-1);border-radius:var(--r-md);margin-bottom:6px}
+.blocked-info{flex:1;min-width:0}
+.blocked-name{font-weight:600;font-size:14px}
+.blocked-user{font-size:12px;color:var(--t-lo)}
+.blocked-date{font-size:11px;color:var(--t-faint)}
+.list-item{display:flex;align-items:center;gap:10px;background:transparent;border:none;color:var(--t-hi);font-family:inherit;cursor:pointer;transition:background var(--dur)}
+.list-item:hover{background:var(--bg-elev-2)}
+.sticker-viewer{position:fixed;inset:0;background:rgba(0,0,0,.9);backdrop-filter:blur(20px);z-index:3000;display:flex;align-items:center;justify-content:center;padding:20px}
+.sticker-viewer-card{background:var(--glass-2);backdrop-filter:var(--glass-blur-heavy);border:1px solid var(--glass-border-strong);border-radius:var(--r-2xl);max-width:400px;width:100%;padding:30px;text-align:center;box-shadow:var(--sh-lg)}
+.sticker-viewer-img{width:200px;height:200px;object-fit:contain;margin:0 auto 20px;display:block}
+.sticker-viewer-pack{font-size:16px;font-weight:700;margin-bottom:4px}
+.sticker-viewer-author{font-size:13px;color:var(--t-lo);margin-bottom:20px}
+.audio-msg{display:flex;align-items:center;gap:12px;background:#1c1c1e;border-radius:var(--r-lg);padding:10px 14px;min-width:300px;max-width:420px;position:relative}
+html[data-theme="light"] .audio-msg{background:#e9e9eb}
+.audio-msg-play{width:48px;height:48px;border-radius:50%;background:#ff3b30;border:none;color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;transition:transform .15s}
+.audio-msg-play:active{transform:scale(.92)}
+.audio-msg-play .material-symbols-rounded{font-size:26px;font-variation-settings:'FILL' 1}
+.audio-msg-info{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.audio-msg-title{font-size:13.5px;font-weight:600;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+html[data-theme="light"] .audio-msg-title{color:#000}
+.audio-msg-time{font-size:12px;color:rgba(255,255,255,.55);font-variant-numeric:tabular-nums}
+html[data-theme="light"] .audio-msg-time{color:rgba(0,0,0,.5)}
+.audio-msg-meta{display:flex;align-items:center;gap:4px;position:absolute;right:12px;bottom:6px;font-size:11px;color:rgba(255,255,255,.45)}
+html[data-theme="light"] .audio-msg-meta{color:rgba(0,0,0,.4)}
+.audio-msg-meta .tick{color:#ff3b30;font-size:14px;line-height:1}
+.audio-msg progress{width:100%;height:3px;appearance:none;background:rgba(255,255,255,.15);border-radius:2px;overflow:hidden;margin-top:4px}
+html[data-theme="light"] .audio-msg progress{background:rgba(0,0,0,.15)}
+.audio-msg progress::-webkit-progress-bar{background:rgba(255,255,255,.15);border-radius:2px}
+.audio-msg progress::-webkit-progress-value{background:#fff;border-radius:2px}
+html[data-theme="light"] .audio-msg progress::-webkit-progress-value{background:#000}
+.audio-msg progress::-moz-progress-bar{background:#fff;border-radius:2px}
+.copy-key-btn{display:inline-flex;align-items:center;gap:6px;background:var(--bg-elev-2);border:1px solid var(--glass-border);border-radius:var(--r-sm);padding:6px 10px;color:var(--t-hi);font-family:inherit;font-size:12px;font-weight:600;cursor:pointer;transition:all var(--dur) var(--ease-spring)}
+.copy-key-btn:hover{background:var(--bg-elev-3);border-color:var(--glass-border-strong)}
+.copy-key-btn:active{transform:scale(.95)}
+.theme-switch{display:flex;gap:6px;background:var(--bg-elev-2);border-radius:var(--r-md);padding:4px}
+.theme-switch button{flex:1;padding:8px 12px;border-radius:var(--r-sm);background:transparent;border:none;color:var(--t-lo);font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;transition:all var(--dur) var(--ease-out);display:flex;align-items:center;justify-content:center;gap:6px}
+.theme-switch button.on{background:var(--glass-3);color:var(--t-hi);box-shadow:var(--sh-sm)}
+
+/* ===== NEW: MESSAGE STYLE VARIANTS ===== */
+.msg-bubble.style-classic{}
+.msg-bubble.style-film{background:linear-gradient(135deg,rgba(255,255,255,.07),rgba(255,255,255,.02))!important;border:1px solid rgba(255,255,255,.16)!important}
+html[data-theme="light"] .msg-bubble.style-film{background:linear-gradient(135deg,rgba(0,0,0,.05),rgba(0,0,0,.01))!important;border:1px solid rgba(0,0,0,.1)!important}
+.msg-bubble.style-glass{background:rgba(255,255,255,.09)!important;backdrop-filter:blur(30px) saturate(180%)!important;-webkit-backdrop-filter:blur(30px) saturate(180%)!important;border:1px solid rgba(255,255,255,.22)!important}
+html[data-theme="light"] .msg-bubble.style-glass{background:rgba(255,255,255,.55)!important;border:1px solid rgba(0,0,0,.08)!important}
+.msg-bubble.style-bubble{border-radius:24px!important}
+.msg-bubble.style-minimal{background:transparent!important;border:none!important;padding:4px 4px!important;box-shadow:none!important}
+.msg-row.own .msg-bubble.style-minimal{background:transparent!important;color:var(--t-hi)!important}
+.msg-row.own .msg-bubble.style-minimal .msg-time{color:var(--t-faint)!important}
+.msg-bubble.no-tail{border-radius:var(--r-lg)!important}
+.msg-bubble.no-tail.own{border-bottom-right-radius:var(--r-lg)!important}
+.msg-bubble.no-tail.other{border-bottom-left-radius:var(--r-lg)!important}
+.msg-bubble.no-border{border:none!important}
+.msg-bubble.no-shadow{box-shadow:none!important}
+.msg-bubble.compact{padding:5px 10px!important}
+
+/* ===== NEW: COMPACT MODE ===== */
+.messages.compact{padding:10px 16px 6px!important}
+.messages.compact .msg-row{margin-bottom:0}
+.messages.compact .msg-meta{margin-bottom:1px}
+
+/* ===== NEW: REACTION STYLE VARIANTS ===== */
+.reactions.style-emoji .reaction-chip{}
+.reactions.style-circle .reaction-chip{width:32px;height:32px;padding:0!important;border-radius:50%!important;justify-content:center}
+.reactions.style-bar .reaction-chip{border-radius:4px!important;padding:2px 6px!important;font-size:11px!important}
+
+/* ===== NEW: VOICE WAVE VARIANTS ===== */
+.voice-wave.style-classic .voice-bar{}
+.voice-wave.style-wave .voice-bar{border-radius:50%!important;width:4px!important}
+.voice-wave.style-dots .voice-bar{width:4px!important;height:4px!important;border-radius:50%!important;align-self:center}
+
+/* ===== NEW: LARGE EMOJI ===== */
+.msg-bubble.large-emoji{font-size:38px!important;line-height:1.2!important;padding:4px 8px!important}
+.msg-bubble.large-emoji .msg-time{font-size:11px!important;opacity:.5}
+
+/* ===== NEW: NO ANIMATION ===== */
+.messages.no-anim .msg-row,.messages.no-anim .msg-bubble{animation:none!important;transition:none!important}
+.msg-bubble{--bubble-bg-alpha:1}
+.msg-row.own .msg-bubble{background:rgba(255,255,255,var(--bubble-bg-alpha))}
+html[data-theme="light"] .msg-row.own .msg-bubble{background:rgba(0,0,0,var(--bubble-bg-alpha))}
+.msg-row.other .msg-bubble{background:rgba(255,255,255,calc(.07 * var(--bubble-bg-alpha)))}
+html[data-theme="light"] .msg-row.other .msg-bubble{background:rgba(0,0,0,calc(.05 * var(--bubble-bg-alpha)))}
+</style>
+</head>
+
+<body>
+<div id="root"></div>
+<div id="toast-container" class="toast-container"></div>
+<script type="text/babel" data-presets="react">
+const {useState,useEffect,useRef,useCallback,useMemo,memo}=React;
+const FB={apiKey:"AIzaSyBAvspeNOOpB5rcWf5dRSPzmthBNE2RMOI",authDomain:"nexic-da915.firebaseapp.com",databaseURL:"https://nexic-da915-default-rtdb.firebaseio.com/",projectId:"nexic-da915",storageBucket:"nexic-da915.appspot.com",messagingSenderId:"247926195695",appId:"1:247926195695:web:5d7590c74cc22e3553621a"};
+if(!firebase.apps.length)firebase.initializeApp(FB);
+const db=firebase.database();
+const auth=firebase.auth();
+const ADMINS=['Gemer','GEMER777','DEF1X'];
+const USER_COST=250;
+const MAX_FILE=15*1024*1024;
+const PAGE=50;
+const DEFAULT_BG='https://i.pinimg.com/1200x/80/84/54/808454954df4b223d8d5c98afeab0697.jpg';
+const BADGE_IMG={Bot:"https://emoji.discadia.com/emojis/7e661f88-15e7-4b02-8b1f-26161cb40b3f.PNG",Youtuber:"https://emoji.discadia.com/emojis/db572aa5-6773-4476-a125-cb3b3e711a09.GIF",SCAM1:"https://emojitg.ru/emoji/SCAMIcon/SCAMIcon_001.webp",SCAM2:"https://emojitg.ru/emoji/SCAMIcon/SCAMIcon_002.webp",Dev:"https://cdn3.emoji.gg/emojis/98800-developer-hexagon.png",Verified:"https://cdn3.emoji.gg/emojis/10722-verified.gif"};
+const FRAMES=[{id:"purple_fire",name:"Purple Fire",price:139,image:"https://remanga.org/media/new_covers/shop-image-984fa01f538440c2b93a107a67fd2d72.gif",type:"frame"},{id:"black_purple",name:"Black-Purple",price:450,image:"https://remanga.org/media/new_covers/shop-image-31eb3d59fd094b48804dc8bc8394551a.gif",type:"frame"},{id:"knight",name:"Knight's",price:20,image:"https://cdn.steamstatic.com/steamcommunity/public/images/items/1263950/8472d7295ca91f42faaae0fb9143b2d94bd5b719.png",type:"frame"},{id:"neon",name:"Neon Stripes",price:400,image:"https://cdn.akamai.steamstatic.com/steamcommunity/public/images/items/3099180/5c0db2c83b5ea9a13e713251d1878b95710cf138.png",type:"frame"},{id:"grey",name:"Grey",price:50,image:"https://shared.fastly.steamstatic.com/community_assets/images/items/3099300/7f852f5cabe69b59ae59da69761a466eba8cdf81.png",type:"frame"},{id:"black",name:"Black",price:250,image:"https://cdn.fastly.steamstatic.com/steamcommunity/public/images/items/860950/6e1b5f5977036a189465f5455f2c54722c12883d.png",type:"frame"},{id:"endless",name:"Endless",price:179,image:"https://images.steamusercontent.com/ugc/2315475112738093883/717F8645FA31BEC75D343ABCED8761672254F74D/",type:"frame"},{id:"purple_magic",name:"Purple Magic",price:179,image:"https://images.steamusercontent.com/ugc/2315475112738087006/C827A7AAC15D6A3DCAEB462FB81904D141616254/",type:"frame"},{id:"purple_glitch",name:"Purple Glitch",price:199,image:"https://images.steamusercontent.com/ugc/2315475112738076946/D6DDA6493DFA4EE23D690F95B8EC4EDAD15B2E23/",type:"frame"},{id:"musedash",name:"Musedash",price:99,image:"https://images.steamusercontent.com/ugc/2315475112738066789/F9997653542DF9F7814D0BB9F9D24B10C4B1A289/",type:"frame"},{id:"retrowave_f",name:"Retrowave",price:129,image:"https://images.steamusercontent.com/ugc/2315475112738072815/191009A5294DBD4E5A3E31E852BFF4995A73D20F/",type:"frame"},{id:"red_mecha",name:"Red Mecha",price:150,image:"https://i.pinimg.com/originals/de/69/97/de699735aa00589ef6c8826068652b9a.gif",type:"frame"}];
+const BACKGROUNDS=[{id:"neon_cyber",name:"Neon Cyber",price:120,image:"https://community.akamai.steamstatic.com/economy/image/a0b44yVZG6xneuQqGEgxNyzAxlmouy8Ipo0bUlJjRDfF9dQS1eD3AHU-t8xnioHyGdqSZpgsmMIM6FMHcQadW6g-oQQxixZRzS7eapq5E6HH8j_w8o5cQ6Tet-f1icHm_SVbj8AmbIRMJIbp-eqijLFABZs/360fx360f",type:"background"},{id:"purple_void",name:"Purple Void",price:180,image:"https://community.fastly.steamstatic.com/economy/image/a0b44yVZG6xneuQqGEgxNyzAxlmouy8Ipo0bUlJjRDfF9dQS1eD3AHU-t8xnioHyGdqSZpgsmMIM6FMAcAyQVqohvFAx3xgNn3rZY8rtFfLEozmo-opdEKOLtLej2sXn_3RRiMUgZ4VLI8ut4_2mYYG50A/360fx360f",type:"background"},{id:"crimson",name:"Crimson",price:200,image:"https://community.fastly.steamstatic.com/economy/image/a0b44yVZG6xneuQqGEgxNyzAxlmouy8Ipo0bUlJjRDfF9dQS1eD3AHU-t8xnioHyGdqSZpgsmMIM6FMDdgOUU6ohvwJujRkGn3qEOZi6FKKWoTL7qdtRQPyLuLKhgJTgqXVRj8Qnb45Lccut4_3p9ttukg/360fx360f",type:"background"},{id:"dark_tech",name:"Dark Tech",price:220,image:"https://community.fastly.steamstatic.com/economy/image/a0b44yVZG6xneuQqGEgxNyzAxlmouy8Ipo0bUlJjRDfF9dQS1eD3AHU-t8xnioHyGdqSZpgsmMIM6FMHdACTVak-oVY2jBwHySjYPMXiE_OS_Wn9rtgEQ_OMt-Wg35-18HBViJB0adoecYbp-eqiK0xeLl4/360fx360f",type:"background"},{id:"cosmic",name:"Cosmic",price:260,image:"https://community.fastly.steamstatic.com/economy/image/a0b44yVZG6xneuQqGEgxNyzAxlmouy8Ipo0bUlJjRDfF9dQS1eD3AHU-t8xnioHyGdqSZpgsmMIM6FMHdAaSVKo-oVhj3EwMySneO8y6RvSToT6qr49QHqDesrSg35a0_SJajM0jPYoUINLp-eqi8aEJbtU/360fx360f",type:"background"},{id:"toxic",name:"Toxic",price:300,image:"https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSIYhY_9XEDYOMNRBsMoGuuOgceXob50kaxV_PHjMO1MHaEqg4lod6guhbkEEyomMbm_3ACufH3PqE8caHGWzLGwux04rQ9HCyywRx2smjUzY2sbyHXOVaRj_Fr/360fx360f",type:"background"},{id:"blue",name:"Blue Storm",price:210,image:"https://community.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSIYhY_9XEDYOMNRBsMoGuuOgceXob50kaxV_PHjMO1MHaEqgQjpt-luhazEUj3nJW1-yNetqWsafU_cfTFDTaUkehy4-A8HHq1wUp1sG3cmdmrbyHXOfX5EWYG/360fx360f",type:"background"},{id:"sunset",name:"Sunset 1985",price:210,image:"https://images.steamusercontent.com/ugc/2520411179262893313/CE831506A41DEF0F6B9BAEDBCFDB074C5ED8C767/",type:"background"},{id:"retrowave_b",name:"Retrowave",price:190,image:"https://images.steamusercontent.com/ugc/2520411179262893279/32B6211229E502C45221593CF0D2A5E01B029098/",type:"background"},{id:"palm",name:"Palm Road",price:179,image:"https://images.steamusercontent.com/ugc/2520411179262893288/E745AFE9AB7FA0F7986C9171BEB2C1903AA80BA7/",type:"background"}];
+
+/* ===== UTILS ===== */
+const u={
+  toast(msg,dur=2600){const c=document.getElementById('toast-container');const el=document.createElement('div');el.className='toast';el.textContent=msg;c.appendChild(el);setTimeout(()=>{el.style.opacity='0';el.style.transition='opacity .35s,transform .35s';el.style.transform='translateY(8px)';setTimeout(()=>el.remove(),350)},dur);},
+  time(ts){return ts?new Date(ts).toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'}):'';},
+  fullDate(ts){if(!ts)return '';return new Date(ts).toLocaleDateString('ru-RU',{day:'2-digit',month:'long',year:'numeric',hour:'2-digit',minute:'2-digit'});},
+  lastSeen(ts,show=true){if(!ts||!show)return 'был(а) давно';const diff=Date.now()-ts;if(diff<6e4)return 'был(а) только что';if(diff<36e5)return `был(а) ${Math.floor(diff/6e4)} мин назад`;if(diff<864e5)return `был(а) ${Math.floor(diff/36e5)} ч назад`;return `был(а) ${new Date(ts).toLocaleDateString('ru-RU')}`;},
+  debounce(fn,ms){let t;return(...a)=>{clearTimeout(t);t=setTimeout(()=>fn(...a),ms)};},
+  chatId(a,b){return[a,b].sort().join('_');},
+  validateFile(f){if(!f)return 'Файл не выбран';if(f.size>MAX_FILE)return 'Файл >15 МБ';return null;},
+  toArr(v){if(Array.isArray(v))return v;if(v&&typeof v==='object')return Object.values(v);return[];},
+  genKey(){const chars='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';let key='';for(let i=0;i<20;i++)key+=chars[Math.floor(Math.random()*chars.length)];return key;},
+  fmtDur(sec){if(!isFinite(sec)||sec<0)sec=0;const m=Math.floor(sec/60),s=Math.floor(sec%60);return `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;},
+  shortNum(n){if(n>=1e6)return (n/1e6).toFixed(1)+'M';if(n>=1e3)return (n/1e3).toFixed(1)+'K';return String(n||0);},
+  isFrozen(p){if(!p||!p.frozen)return false;if(p.frozenUntil&&Date.now()>p.frozenUntil)return false;return true;},
+  copyText(text){try{navigator.clipboard.writeText(text);u.toast('Скопировано');}catch(e){const ta=document.createElement('textarea');ta.value=text;document.body.appendChild(ta);ta.select();document.execCommand('copy');ta.remove();u.toast('Скопировано');}},
+  /* ===== NEW: sound beep for notifications ===== */
+  beep(){try{const ctx=new (window.AudioContext||window.webkitAudioContext)();const osc=ctx.createOscillator();const gain=ctx.createGain();osc.connect(gain);gain.connect(ctx.destination);osc.frequency.value=880;osc.type='sine';gain.gain.setValueAtTime(0.08,ctx.currentTime);gain.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+0.15);osc.start();osc.stop(ctx.currentTime+0.15);}catch(e){}},
+  /* ===== NEW: detect if message is only emoji ===== */
+  isOnlyEmoji(text){if(!text)return false;const stripped=text.replace(/[\s\uFE0F\u200D]/g,'');if(!stripped)return false;try{const emojiRegex=/^[\p{Extended_Pictographic}\u{1F3FB}-\u{1F3FF}\u{1F1E6}-\u{1F1FF}]+$/u;return emojiRegex.test(stripped)&&stripped.length<=8;}catch(e){return false;}}
+};
+
+/* ===== DESIGN HELPER (applies all "Внешний вид" settings) ===== */
+function getDesign(profile){
+  const d=(profile&&profile.design)||{};
+  return{
+    messageStyle:d.messageStyle||'classic',
+    messageRadius:d.messageRadius!=null?d.messageRadius:16,
+    messageOpacity:d.messageOpacity!=null?d.messageOpacity:100,
+    fontSize:d.fontSize!=null?d.fontSize:14.5,
+    lineHeight:d.lineHeight!=null?d.lineHeight:145,
+    bubbleTail:d.bubbleTail!==false,
+    compactMode:d.compactMode===true,
+    showAvatars:d.showAvatars!==false,
+    animateMessages:d.animateMessages!==false,
+    messageShadow:d.messageShadow!==false,
+    largeEmoji:d.largeEmoji!==false,
+    timestamps:d.timestamps!==false,
+    readReceipts:d.readReceipts!==false,
+    linkPreview:d.linkPreview!==false,
+    typingIndicator:d.typingIndicator!==false,
+    autoNightMode:d.autoNightMode!==false,
+    reactionsStyle:d.reactionsStyle||'emoji',
+    voiceWave:d.voiceWave||'classic',
+    bubbleBorder:d.bubbleBorder===true,
+    soundOn:d.soundOn===true,
+    forwardHideAuthor:d.forwardHideAuthor===true,
+    chatBackground:d.chatBackground||DEFAULT_BG
+  };
+}
+
+/* ===== ICONS / SMALL COMPONENTS ===== */
+const Icon=memo(({name,size=22,style={}})=><span className="material-symbols-rounded" style={{fontSize:size,...style}}>{name}</span>);
+const Diamond=memo(({size=14})=><span className="diamond" style={{width:size,height:size}}/>);
+
+/* ===== SERVICES ===== */
+const userSvc={
+  get:async uid=>{if(!uid)return null;const s=await db.ref(`users/${uid}`).once('value');return s.val();},
+  update:(uid,data)=>db.ref(`users/${uid}`).update(data),
+  findByUser:async usr=>{const s=await db.ref('users').orderByChild('user').equalTo(usr.toLowerCase()).once('value');return s.exists()?Object.values(s.val())[0]:null;},
+  findByName:async name=>{const s=await db.ref('users').orderByChild('username').equalTo(name).once('value');return s.exists()?Object.values(s.val())[0]:null;},
+  findAny:async q=>{const byUser=await userSvc.findByUser(q);if(byUser)return byUser;return await userSvc.findByName(q);},
+  touchLastSeen:uid=>db.ref(`users/${uid}/lastSeen`).set(Date.now()),
+  isAdmin:p=>p&&ADMINS.includes(p.username)
+};
+const msgSvc={
+  send:(cid,m)=>db.ref(`direct/${cid}`).push(m),
+  edit:(cid,id,c)=>db.ref(`direct/${cid}/${id}`).update({content:c,edited:true}),
+  del:(cid,id)=>db.ref(`direct/${cid}/${id}`).remove(),
+  react:(cid,id,uid,e)=>db.ref(`direct/${cid}/${id}/reactions/${uid}`).set(e),
+  unreact:(cid,id,uid)=>db.ref(`direct/${cid}/${id}/reactions/${uid}`).remove(),
+  vote:(cid,id,uid,idx)=>db.ref(`direct/${cid}/${id}/poll/votes/${uid}`).set(idx),
+  sub:(cid,cb)=>{const r=db.ref(`direct/${cid}`).limitToLast(PAGE);const h=r.on('value',s=>{const d=s.val()||{};cb(Object.entries(d).map(([id,v])=>({...v,id})).sort((a,b)=>(a.timestamp||0)-(b.timestamp||0)));});return()=>r.off('value',h);}
+};
+const grpMsgSvc={
+  send:(gid,m)=>db.ref(`group_messages/${gid}`).push(m),
+  edit:(gid,id,c)=>db.ref(`group_messages/${gid}/${id}`).update({content:c,edited:true}),
+  del:(gid,id)=>db.ref(`group_messages/${gid}/${id}`).remove(),
+  react:(gid,id,uid,e)=>db.ref(`group_messages/${gid}/${id}/reactions/${uid}`).set(e),
+  unreact:(gid,id,uid)=>db.ref(`group_messages/${gid}/${id}/reactions/${uid}`).remove(),
+vote:(gid,id,uid,idx)=>db.ref(`group_messages/${gid}/${id}/poll/votes/${uid}`).set(idx),
+  sub:(gid,cb)=>{const r=db.ref(`group_messages/${gid}`).limitToLast(PAGE);const h=r.on('value',s=>{const d=s.val()||{};cb(Object.entries(d).map(([id,v])=>({...v,id})).sort((a,b)=>(a.timestamp||0)-(b.timestamp||0)));});return()=>r.off('value',h);}
+};
+const frSvc={
+  async send(fromUid,fromData,toUid){const ex=await db.ref(`friends/${fromUid}/${toUid}`).once('value');if(ex.exists())throw new Error('Уже в друзьях');await db.ref(`friend_requests/${toUid}/${fromUid}`).set({uid:fromUid,username:fromData.username,avatar:fromData.avatar,timestamp:Date.now()});},
+  async accept(myUid,fromUid,fromData){const me=await userSvc.get(myUid);await db.ref(`friends/${myUid}/${fromUid}`).set({uid:fromUid,username:fromData.username,avatar:fromData.avatar});await db.ref(`friends/${fromUid}/${myUid}`).set({uid:myUid,username:me.username,avatar:me.avatar});await db.ref(`friend_requests/${myUid}/${fromUid}`).remove();},
+  reject:(my,from)=>db.ref(`friend_requests/${my}/${from}`).remove(),
+  remove:(a,b)=>Promise.all([db.ref(`friends/${a}/${b}`).remove(),db.ref(`friends/${b}/${a}`).remove()]),
+  block:(myUid,otherUid)=>db.ref(`blocks/${myUid}/${otherUid}`).set({timestamp:Date.now()}),
+  unblock:(myUid,otherUid)=>db.ref(`blocks/${myUid}/${otherUid}`).remove(),
+  subIn:(uid,cb)=>{const r=db.ref(`friend_requests/${uid}`);const h=r.on('value',s=>cb(Object.values(s.val()||{}).sort((a,b)=>b.timestamp-a.timestamp)));return()=>r.off('value',h);}
+};
+const grpSvc={
+  async create(data,owner){const gid=`group_${Date.now()}_${Math.random().toString(36).slice(2,6)}`;const joinKey=u.genKey();await db.ref(`groups/${gid}`).set({...data,id:gid,ownerId:owner,createdAt:Date.now(),members:{[owner]:{role:'owner',joinedAt:Date.now()}},roles:{owner:{name:'Владелец',color:'#f59e0b',permissions:{send:true,manage_posts:true,add_users:true,add_admins:true,block_users:true,kick:true,ban:true,manage_roles:true,manage_group:true,delete_group:true,accept:true}},admin:{name:'Админ',color:'#a855f7',permissions:{send:true,manage_posts:true,add_users:true,add_admins:false,block_users:true,kick:true,ban:true,manage_roles:false,manage_group:true,delete_group:false,accept:true}},member:{name:'Участник',color:'#94a3b8',permissions:{send:true,manage_posts:false,add_users:false,add_admins:false,block_users:false,kick:false,ban:false,manage_roles:false,manage_group:false,delete_group:false,accept:false}}},settings:{slowMode:0,soundEnabled:true},linkType:'public',joinKey,blacklist:{},joinRequests:{},badges:{}});return gid;},
+  leave:(gid,uid)=>db.ref(`groups/${gid}/members/${uid}`).remove(),
+  delete:gid=>db.ref(`groups/${gid}`).remove(),
+  join:(gid,uid,user)=>db.ref(`groups/${gid}/members/${uid}`).set({role:'member',joinedAt:Date.now(),username:user.username,avatar:user.avatar}),
+  update:(gid,data)=>db.ref(`groups/${gid}`).update(data),
+  findByJoinKey:async key=>{const s=await db.ref('groups').orderByChild('joinKey').equalTo(key).once('value');if(!s.exists())return null;const e=Object.entries(s.val());return e[0]?{id:e[0][0],...e[0][1]}:null;}
+};
+const badgeSvc={
+  giveToGroup:(gid,badge)=>db.ref(`groups/${gid}/badges/group`).set({badge,addedAt:Date.now()}),
+  removeFromGroup:(gid)=>db.ref(`groups/${gid}/badges/group`).remove()
+};
+const stickerSvc={
+  create:(uid,pack)=>db.ref(`users/${uid}/stickerPacks/${pack.id}`).set(pack),
+  delete:(uid,pid)=>db.ref(`users/${uid}/stickerPacks/${pid}`).remove(),
+  addSticker:(uid,pid,url)=>db.ref(`users/${uid}/stickerPacks/${pid}/stickers`).push(url),
+  async copyPack(fromUid,packId,toUid){const s=await db.ref(`users/${fromUid}/stickerPacks/${packId}`).once('value');const pack=s.val();if(!pack)throw new Error('Пак не найден');const newId=`pack_${Date.now().toString(36)}`;await db.ref(`users/${toUid}/stickerPacks/${newId}`).set({...pack,id:newId,copiedFrom:fromUid,createdAt:Date.now()});return newId;}
+};
+
+/* ===== HOOKS ===== */
+function useAuth(){
+  const [user,setUser]=useState(null);
+  const [profile,setProfile]=useState(null);
+  const [loading,setLoading]=useState(true);
+  const pref=useRef(null);
+  useEffect(()=>{
+    const un=auth.onAuthStateChanged(x=>{
+      setUser(x);
+      if(pref.current)pref.current.off();
+      if(x){
+        const r=db.ref(`users/${x.uid}`);
+        r.on('value',s=>{
+          const v=s.val();
+          if(v){
+            const upd={};
+            if(v.gems===undefined)upd.gems=100;
+            if(!v.inventory)upd.inventory=[];
+            if(!v.badges)upd.badges={};
+            if(!v.design)upd.design={accent:'#ffffff',frameColor:'#ffffff',messageStyle:'classic',messageRadius:16,messageOpacity:100,showLastSeen:true,soundOn:false,forwardHideAuthor:false,chatBackground:DEFAULT_BG};
+            if(!v.description)upd.description='';
+            if(!v.status)upd.status='online';
+            if(!v.privacy)upd.privacy={profile_photos:'all',forward_messages:'all',birthday:'all',bio:'all',last_seen:'all',phone:'nobody',calls:'all',voice:'all',groups_invite:'all',channels_invite:'all'};
+            if(!v.stickerPacks)upd.stickerPacks={};
+            if(v.username&&!v.user)upd.user=v.username.toLowerCase();
+            if(!v.theme)upd.theme='dark';
+            if(Object.keys(upd).length)r.update(upd);
+          }
+          setProfile(v);
+          setLoading(false);
+        });
+        pref.current=r;
+      }else{setProfile(null);setLoading(false);}
+    });
+    return()=>{un();if(pref.current)pref.current.off();};
+  },[]);
+  useEffect(()=>{
+    if(!user)return;
+    const t=()=>userSvc.touchLastSeen(user.uid);
+    t();const i=setInterval(t,60000);return()=>clearInterval(i);
+  },[user]);
+  useEffect(()=>{
+    if(profile?.theme){document.documentElement.setAttribute('data-theme',profile.theme);}
+    else{document.documentElement.setAttribute('data-theme','dark');}
+  },[profile?.theme]);
+  return{user,profile,loading};
+}
+function useFriends(uid){
+  const [friends,setFriends]=useState([]);
+  const [online,setOnline]=useState({});
+  useEffect(()=>{
+    if(!uid)return;
+    const unsubs=[];const fd={};
+    const r=db.ref(`friends/${uid}`);
+    const h=r.on('value',s=>{
+      const list=Object.values(s.val()||{});
+      list.forEach(f=>{
+        if(fd[f.uid]&&fd[f.uid]._sub)return;
+        const pr=db.ref(`users/${f.uid}`);
+        const ph=pr.on('value',ps=>{
+          const p=ps.val();
+          if(p){fd[f.uid]={uid:f.uid,username:p.username,avatar:p.avatar,_sub:1};setFriends(Object.values(fd).map(x=>({uid:x.uid,username:x.username,avatar:x.avatar})));}
+        });
+        unsubs.push(()=>pr.off('value',ph));
+      });
+    });
+    return()=>{r.off('value',h);unsubs.forEach(fn=>fn());};
+  },[uid]);
+  useEffect(()=>{
+    if(!friends.length)return;
+    const unsubs=[];
+    friends.forEach(f=>{
+      const sr=db.ref(`status/${f.uid}`);
+      const sh=sr.on('value',s=>setOnline(p=>({...p,[f.uid]:s.val()===true})));
+      unsubs.push(()=>sr.off('value',sh));
+    });
+    return()=>unsubs.forEach(fn=>fn());
+  },[friends.map(f=>f.uid).join(',')]);
+  return{friends,online};
+}
+function useLiveProfile(uid){
+  const [p,setP]=useState(null);
+  useEffect(()=>{
+    if(!uid){setP(null);return;}
+    const r=db.ref(`users/${uid}`);
+    const h=r.on('value',s=>setP(s.val()));
+    return()=>r.off('value',h);
+  },[uid]);
+  return p;
+}
+function useRequests(uid){
+  const [inc,setI]=useState([]);
+  useEffect(()=>{if(!uid)return;const un=frSvc.subIn(uid,setI);return un;},[uid]);
+  return{incoming:inc,outgoing:[]};
+}
+function useGroups(uid){
+  const [g,setG]=useState([]);
+  useEffect(()=>{
+    if(!uid)return;
+    const r=db.ref('groups');
+    const h=r.on('value',s=>{
+      const all=s.val()||{};
+      const mine=Object.entries(all).filter(([_,x])=>x.members&&x.members[uid]).map(([id,x])=>({id,...x}));
+      setG(mine);
+    });
+    return()=>r.off('value',h);
+  },[uid]);
+  return g;
+}
+function useMessages(cid,isGroup){
+  const [m,setM]=useState([]);
+  const [loading,setLoading]=useState(true);
+  useEffect(()=>{
+    if(!cid){setM([]);setLoading(false);return;}
+    setLoading(true);
+    const svc=isGroup?grpMsgSvc:msgSvc;
+    return svc.sub(cid,list=>{setM(list);setLoading(false);});
+  },[cid,isGroup]);
+  return{msgs:m,loading};
+}
+const bc=new Map();
+const badgeListeners=new Map();
+function useBadges(uid){
+  const [b,setB]=useState(()=>bc.has(uid)?bc.get(uid):undefined);
+  useEffect(()=>{
+    if(!uid)return;
+    if(bc.has(uid))setB(bc.get(uid));
+    if(badgeListeners.has(uid)){
+      const subs=badgeListeners.get(uid);
+      const cb=(v)=>{setB(v);};
+      subs.push(cb);
+      return ()=>{const arr=badgeListeners.get(uid)||[];const idx=arr.indexOf(cb);if(idx>=0)arr.splice(idx,1);};
+    }
+    const subs=[];
+    const r=db.ref(`users/${uid}/badges`);
+    const h=r.on('value',s=>{const v=s.val()||{};bc.set(uid,v);setB(v);subs.forEach(fn=>fn(v));});
+    badgeListeners.set(uid,subs);
+    const myCb=(v)=>{setB(v);};
+    subs.push(myCb);
+    return ()=>{const arr=badgeListeners.get(uid)||[];const idx=arr.indexOf(myCb);if(idx>=0)arr.splice(idx,1);if(arr.length===0){r.off('value',h);badgeListeners.delete(uid);}};
+  },[uid]);
+  return b;
+}
+const groupBadgeCache=new Map();
+const groupBadgeListeners=new Map();
+function useGroupBadge(gid){
+  const [b,setB]=useState(()=>groupBadgeCache.has(gid)?groupBadgeCache.get(gid):undefined);
+  useEffect(()=>{
+    if(!gid)return;
+    if(groupBadgeCache.has(gid))setB(groupBadgeCache.get(gid));
+    if(groupBadgeListeners.has(gid)){
+      const subs=groupBadgeListeners.get(gid);
+      const cb=(v)=>{setB(v);};
+      subs.push(cb);
+      return ()=>{const arr=groupBadgeListeners.get(gid)||[];const idx=arr.indexOf(cb);if(idx>=0)arr.splice(idx,1);};
+    }
+    const subs=[];
+    const r=db.ref(`groups/${gid}/badges/group`);
+    const h=r.on('value',s=>{const v=s.val();groupBadgeCache.set(gid,v);setB(v);subs.forEach(fn=>fn(v));});
+    groupBadgeListeners.set(gid,subs);
+    const myCb=(v)=>{setB(v);};
+    subs.push(myCb);
+    return ()=>{const arr=groupBadgeListeners.get(gid)||[];const idx=arr.indexOf(myCb);if(idx>=0)arr.splice(idx,1);if(arr.length===0){r.off('value',h);groupBadgeListeners.delete(gid);}};
+  },[gid]);
+  return b;
+}
+function can(group,uid,perm){
+  if(!group||!uid)return false;
+  if(group.ownerId===uid)return true;
+  const role=group.members?.[uid]?.role||'member';
+  return group.roles?.[role]?.permissions?.[perm]||false;
+}
+function isAdminOf(group,uid){
+  if(!group||!uid)return false;
+  if(group.ownerId===uid)return true;
+  if(group.admins?.[uid])return true;
+  return can(group,uid,'manage_posts')||can(group,uid,'add_admins');
+}
+
+
+/* ===== CONFIRM CONTEXT ===== */
+const ConfirmCtx=React.createContext(null);
+function ConfirmProvider({children}){
+  const [state,setState]=useState(null);
+  const confirm=useCallback((opts)=>new Promise(resolve=>{setState({title:opts.title||'Подтвердите',message:opts.message||'',confirmText:opts.confirmText||'OK',cancelText:opts.cancelText||'Отмена',danger:opts.danger,onResolve:resolve});}),[]);
+  const close=(r)=>{if(state?.onResolve)state.onResolve(r);setState(null);};
+  return(
+    <ConfirmCtx.Provider value={confirm}>
+      {children}
+      {state&&(<div className="modal-overlay" onClick={e=>e.target===e.currentTarget&&close(false)} style={{zIndex:3000}}>
+        <div className="modal" style={{maxWidth:400}}>
+          <div className="modal-header"><h2 className="modal-title">{state.title}</h2></div>
+          <div className="modal-body">{state.message&&<p style={{color:'var(--t-mid)',fontSize:14,lineHeight:1.6}}>{state.message}</p>}</div>
+          <div style={{padding:'0 24px 20px',display:'flex',gap:10}}>
+            <button className="btn btn-secondary f1" onClick={()=>close(false)}>{state.cancelText}</button>
+            <button className={`btn ${state.danger?'btn-danger':'btn-primary'} f1`} onClick={()=>close(true)}>{state.confirmText}</button>
+          </div>
+        </div>
+      </div>)}
+    </ConfirmCtx.Provider>
+  );
+}
+const useConfirm=()=>React.useContext(ConfirmCtx);
+
+/* ===== AVATARS ===== */
+const AvRound=memo(({src,size=40,status,onClick,frozen,username})=>{
+  if(frozen)return(<div className="av-wrap" onClick={onClick} style={{cursor:onClick?'pointer':'default',width:size,height:size}}><div className="frozen-avatar" style={{width:size,height:size,fontSize:size*0.4}}>❄️</div></div>);
+  if(!src||src===''){const letter=(username||'?')[0].toUpperCase();return(<div className="av-wrap" onClick={onClick} style={{cursor:onClick?'pointer':'default',width:size,height:size}}><div className="blocked-avatar" style={{width:size,height:size,fontSize:size*0.45}}>{letter}</div></div>);}
+  return(<div className="av-wrap" onClick={onClick} style={{cursor:onClick?'pointer':'default',width:size,height:size}}><img className="av" src={src} alt="" style={{width:size,height:size}}/>{status==='online'&&<div className="av-status online"/>}</div>);
+});
+const AvSquare=memo(({src,size=110,frame,children,frozen,username})=>{
+  if(frozen)return(<div className="av-sq-wrap" style={{width:size,height:size}}><div className="frozen-avatar" style={{width:size,height:size,borderRadius:'var(--r-lg)',fontSize:size*0.35}}>❄️</div>{children}</div>);
+  if(!src||src===''){const letter=(username||'?')[0].toUpperCase();return(<div className="av-sq-wrap" style={{width:size,height:size}}><div className="blocked-avatar" style={{width:size,height:size,borderRadius:'var(--r-lg)',fontSize:size*0.4}}>{letter}</div>{children}</div>);}
+  return(<div className="av-sq-wrap" style={{width:size,height:size}}><img className="av-sq" src={src} alt="" style={{width:size,height:size}}/>{frame?.image&&<div className="av-sq-frame" style={{backgroundImage:`url(${frame.image})`}}/>}{children}</div>);
+});
+
+/* ===== BADGES ===== */
+const Badges=memo(({uid})=>{
+  const b=useBadges(uid);
+  if(b===undefined)return null;
+  if(!b)return null;
+  const items=[];
+  if(b.Dev)items.push(<img key="dev" src={BADGE_IMG.Dev} alt="" className="badge-icon"/>);
+  if(b.Verified)items.push(<img key="vf" src={BADGE_IMG.Verified} alt="" className="badge-icon"/>);
+  if(b.Bot)items.push(<img key="bot" src={BADGE_IMG.Bot} alt="" className="badge-icon"/>);
+  if(b.Youtuber)items.push(<img key="yt" src={BADGE_IMG.Youtuber} alt="" className="badge-icon"/>);
+  if(b.SCAM){items.push(<span key="scam" className="badge-scam"><img src={BADGE_IMG.SCAM1} alt=""/><img src={BADGE_IMG.SCAM2} alt=""/></span>);}
+  if(!items.length)return null;
+  return <span style={{display:'inline-flex',alignItems:'center',gap:2,marginLeft:4}}>{items}</span>;
+});
+const GroupBadgeIcon=memo(({gid})=>{
+  const b=useGroupBadge(gid);
+  if(b===undefined)return null;
+  if(!b||!b.badge)return null;
+  const img=BADGE_IMG[b.badge];
+  if(!img)return null;
+  return <img src={img} alt="" className="badge-icon" style={{marginLeft:4,width:16,height:16,objectFit:'contain',display:'inline-block',verticalAlign:'middle'}}/>;
+});
+
+/* ===== MODAL ===== */
+const Mdl=memo(({open,onClose,title,children,maxWidth})=>{
+  if(!open)return null;
+  return(
+    <div className="modal-overlay" onClick={e=>e.target===e.currentTarget&&onClose?.()}>
+      <div className="modal" style={maxWidth?{maxWidth}:{}}>
+        {title&&<div className="modal-header"><h2 className="modal-title">{title}</h2><button className="ibtn" onClick={onClose}><Icon name="close" size={20}/></button></div>}
+        <div className="modal-body">{children}</div>
+      </div>
+    </div>
+  );
+});
+
+/* ===== IMAGE VIEWER / CONTEXT / REACTION ===== */
+const ImageViewer=memo(({src,onClose})=>{
+  if(!src)return null;
+  return(
+    <div className="image-viewer" onClick={onClose}>
+      <div className="image-viewer-actions" onClick={e=>e.stopPropagation()}>
+        <button onClick={()=>{const a=document.createElement('a');a.href=src;a.download='nexic.png';a.click();}}><Icon name="download" size={22}/></button>
+        <button onClick={onClose}><Icon name="close" size={22}/></button>
+      </div>
+      <img src={src} alt="" onClick={e=>e.stopPropagation()}/>
+    </div>
+  );
+});
+const ContextMenu=memo(({x,y,onClose,items})=>{
+  useEffect(()=>{const h=()=>onClose();window.addEventListener('click',h);return()=>window.removeEventListener('click',h);},[onClose]);
+  return(
+    <div className="context-menu" style={{left:Math.min(x,window.innerWidth-220),top:Math.min(y,window.innerHeight-items.length*44-20)}} onClick={e=>e.stopPropagation()}>
+      {items.map((it,i)=>(<button key={i} onClick={()=>{it.action();onClose();}} className={it.danger?'danger':''}><Icon name={it.icon} size={18}/>{it.label}</button>))}
+    </div>
+  );
+});
+const ReactionPicker=memo(({x,y,onPick,onClose})=>{
+  useEffect(()=>{const h=()=>onClose();setTimeout(()=>window.addEventListener('click',h),50);return()=>window.removeEventListener('click',h);},[onClose]);
+  const QUICK=['❤️','👍','👎','🔥','😂','👏'];
+  return(
+    <div className="reaction-picker" style={{left:Math.min(x,window.innerWidth-280),top:Math.max(y-70,10)}} onClick={e=>e.stopPropagation()}>
+      {QUICK.map(e=>(<button key={e} onClick={()=>{onPick(e);onClose();}}>{e}</button>))}
+    </div>
+  );
+});
+
+/* ===== AUTH SCREEN ===== */
+function AuthScreen(){
+  const [isLogin,setLogin]=useState(true);
+  const [user,setUser]=useState('');
+  const [username,setUsername]=useState('');
+  const [pass,setPass]=useState('');
+  const [busy,setBusy]=useState(false);
+  const go=async(e)=>{
+    e.preventDefault();
+    if(!user.trim()||!pass)return u.toast('Заполните');
+    if(pass.length<6)return u.toast('Пароль ≥6');
+    setBusy(true);
+    const login=user.toLowerCase().trim();
+    const email=`${login}@nex.app`;
+    try{
+      if(isLogin){await auth.signInWithEmailAndPassword(email,pass);}
+      else{
+        const cred=await auth.createUserWithEmailAndPassword(email,pass);
+        const uid=cred.user.uid;
+        await db.ref(`users/${uid}`).set({user:login,username:username.trim()||login,uid,avatar:`https://api.dicebear.com/7.x/avataaars/svg?seed=${uid}`,gems:100,description:'',inventory:[],badges:{},lastSeen:Date.now(),status:'online',stickerPacks:{},privacy:{profile_photos:'all',forward_messages:'all',birthday:'all',bio:'all',last_seen:'all',phone:'nobody',calls:'all',voice:'all',groups_invite:'all',channels_invite:'all'},theme:'dark',design:{accent:'#ffffff',frameColor:'#ffffff',messageStyle:'classic',messageRadius:16,messageOpacity:100,showLastSeen:true,soundOn:false,forwardHideAuthor:false,chatBackground:DEFAULT_BG}});
+        u.toast('Аккаунт создан!');
+      }
+    }catch(err){u.toast((err?.message||'Ошибка').replace('Firebase:','').trim());}
+    finally{setBusy(false);}
+  };
+  return(
+    <div className="auth-screen">
+      <div className="auth-card">
+        <div className="auth-logo">NEXIC</div>
+        <div className="auth-subtitle">Современный мессенджер</div>
+        <form onSubmit={go} className="auth-form">
+          <input className="input-field" placeholder="Юзер" value={user} onChange={e=>setUser(e.target.value)}/>
+          {!isLogin&&<input className="input-field" placeholder="Ник" value={username} onChange={e=>setUsername(e.target.value)}/>}
+          <input className="input-field" type="password" placeholder="Пароль" value={pass} onChange={e=>setPass(e.target.value)}/>
+          <button className="btn btn-primary btn-full" disabled={busy}>{busy?'...':(isLogin?'Войти':'Создать')}</button>
+        </form>
+        <button type="button" onClick={()=>setLogin(!isLogin)} className="auth-toggle">{isLogin?'Создать аккаунт':'Уже есть?'}</button>
+      </div>
+    </div>
+  );
+}
+
+/* ===== PROFILE VIEW ===== */
+function ProfileView({user,profile,targetUid,onClose,isOwn,onWrite,onBlock,isBlocked}){
+  const live=useLiveProfile(targetUid);
+  const data=isOwn?profile:live;
+  const [online,setOnline]=useState(false);
+  useEffect(()=>{if(!targetUid)return;const r=db.ref(`status/${targetUid}`);const h=r.on('value',s=>setOnline(s.val()===true));return()=>r.off('value',h);},[targetUid]);
+  if(!data)return<div className="loading-screen"><div className="spinner"/></div>;
+  const frozen=u.isFrozen(data);
+  const displayName=frozen?'❄️ Временно заморожен':data.username;
+  const displayAvatar=frozen?'':data.avatar;
+  return(
+    <div style={{height:'100%',overflowY:'auto'}} className="scroll-area">
+      {!isOwn&&(<div className="topbar">
+        <button className="ibtn" onClick={onClose}><Icon name="arrow_back"/></button>
+        <div style={{fontWeight:600,flex:1}}>Профиль</div>
+        {!isBlocked&&!frozen&&<button className="ibtn" onClick={()=>onWrite?.(targetUid)}><Icon name="chat"/></button>}
+        <button className="ibtn" onClick={onBlock} style={{color:isBlocked?'var(--danger)':undefined}}><Icon name={isBlocked?'lock':'lock_open'} size={20}/></button>
+      </div>)}
+      <div className="profile-hero">
+        {data.equippedBackground?.image&&<div className="profile-hero-bg" style={{backgroundImage:`url(${data.equippedBackground.image})`}}/>}
+        <div className="profile-hero-content">
+          <AvSquare src={displayAvatar} size={110} frame={frozen?null:data.equippedFrame} frozen={frozen} username={data.username}/>
+          <div className="profile-name">{displayName}<Badges uid={data.uid||targetUid}/></div>
+          {!frozen&&<div className="profile-handle">@{data.user}</div>}
+          <div className="profile-status" style={{color:online?'var(--success)':'var(--t-faint)'}}>{frozen?'Заморожен':(isBlocked?'был(а) давно':(online?'В сети':u.lastSeen(data.lastSeen,data.design?.showLastSeen!==false)))}</div>
+          {data.description&&!frozen&&<div className="profile-bio">{data.description}</div>}
+        </div>
+      </div>
+      {!frozen&&<div style={{padding:24}}>
+        <div className="info-row"><div className="info-icon"><Icon name="alternate_email" size={18}/></div><div className="f1"><div className="info-label">Юзер</div><div className="info-value">@{data.user}</div></div></div>
+        <div className="info-row"><div className="info-icon"><Diamond size={18}/></div><div className="f1"><div className="info-label">Алмазы</div><div className="info-value">{data.gems||0}</div></div></div>
+      </div>}
+    </div>
+  );
+}
+
+/* ===== CHANNEL PROFILE VIEW ===== */
+function ChannelProfileView({channel,user,profile,onClose,onOpenSettings,isSubscribed,onJoin,onLeave,isAdmin}){
+  const [liveCh,setLiveCh]=useState(channel);
+  useEffect(()=>{const r=db.ref(`groups/${channel.id}`);const h=r.on('value',s=>setLiveCh(s.val()));return()=>r.off('value',h);},[channel.id]);
+  const ch=liveCh||channel;
+  const memberCount=Object.keys(ch.members||{}).length;
+  return(
+    <div style={{height:'100%',overflowY:'auto'}} className="scroll-area">
+      <div className="topbar">
+        <button className="ibtn" onClick={onClose}><Icon name="arrow_back"/></button>
+        <div style={{fontWeight:600,flex:1}} className="tr">{ch.name}</div>
+        {isAdmin&&<button className="ibtn" onClick={onOpenSettings}><Icon name="settings"/></button>}
+      </div>
+      <div className="profile-hero">
+        <div className="profile-hero-content">
+          <AvSquare src={ch.avatar} size={110}/>
+          <div className="profile-name">{ch.name}<GroupBadgeIcon gid={ch.id}/></div>
+          <div className="profile-handle">{u.shortNum(memberCount)} подписчиков</div>
+          {ch.description&&<div className="profile-bio">{ch.description}</div>}
+        </div>
+      </div>
+      <div style={{padding:'0 20px 20px'}}>
+        {isSubscribed?<button className="btn btn-danger btn-full" onClick={onLeave}><Icon name="logout" size={18}/> Покинуть</button>:<button className="btn btn-primary btn-full" onClick={onJoin}><Icon name="login" size={18}/> Подписаться</button>}
+      </div>
+    </div>
+  );
+}
+
+/* ===== SETTINGS MODAL ===== */
+function SettingsModal({open,onClose,user,profile}){
+  const [tab,setTab]=useState('profile');
+  const [username,setUsername]=useState(profile.username||'');
+  const [desc,setDesc]=useState(profile.description||'');
+  const [busy,setBusy]=useState(false);
+  const [blockedOpen,setBlockedOpen]=useState(false);
+  const [chatBgUrl,setChatBgUrl]=useState('');
+  useEffect(()=>{if(open){setUsername(profile.username||'');setDesc(profile.description||'');setChatBgUrl(profile.design?.chatBackground||DEFAULT_BG);}},[open,profile]);
+  const save=async()=>{if(!username.trim())return u.toast('Ник пустой');setBusy(true);try{await userSvc.update(user.uid,{username:username.trim(),description:desc.trim()});u.toast('Сохранено');}finally{setBusy(false);}};
+  const dUpdate=(k,v)=>db.ref(`users/${user.uid}/design/${k}`).set(v);
+  const uploadAv=e=>{const f=e.target.files?.[0];if(!f)return;const r=new FileReader();r.onloadend=()=>userSvc.update(user.uid,{avatar:r.result});r.readAsDataURL(f);};
+  const uploadChatBg=e=>{const f=e.target.files?.[0];if(!f)return;const r=new FileReader();r.onloadend=()=>dUpdate('chatBackground',r.result);r.readAsDataURL(f);};
+  const d=profile.design||{};
+  const MESSAGE_STYLES=[['classic','Классический'],['film','Плёночный'],['glass','Стеклянный'],['bubble','Пузырь'],['minimal','Минимал']];
+  const DESIGN_SETTINGS=[
+    {key:'messageStyle',label:'Стиль сообщений',type:'select',options:MESSAGE_STYLES},
+    {key:'messageRadius',label:'Скругление',type:'range',min:4,max:24,unit:'px'},
+    {key:'messageOpacity',label:'Прозрачность',type:'range',min:30,max:100,unit:'%'},
+    {key:'fontSize',label:'Размер шрифта',type:'range',min:12,max:20,unit:'px'},
+    {key:'lineHeight',label:'Межстрочный',type:'range',min:120,max:200,unit:'%'},
+    {key:'bubbleTail',label:'Хвостик у сообщений',type:'toggle',defaultTrue:true},
+    {key:'compactMode',label:'Компактный режим',type:'toggle'},
+    {key:'showAvatars',label:'Показывать аватарки',type:'toggle',defaultTrue:true},
+    {key:'animateMessages',label:'Анимация сообщений',type:'toggle',defaultTrue:true},
+    {key:'messageShadow',label:'Тень сообщений',type:'toggle',defaultTrue:true},
+    {key:'largeEmoji',label:'Крупные эмодзи',type:'toggle',defaultTrue:true},
+    {key:'timestamps',label:'Показывать время',type:'toggle',defaultTrue:true},
+    {key:'readReceipts',label:'Галочки прочтения',type:'toggle',defaultTrue:true},
+    {key:'linkPreview',label:'Превью ссылок',type:'toggle',defaultTrue:true},
+    {key:'typingIndicator',label:'Индикатор набора',type:'toggle',defaultTrue:true},
+    {key:'autoNightMode',label:'Авто тёмная тема',type:'toggle',defaultTrue:true},
+    {key:'reactionsStyle',label:'Стиль реакций',type:'select',options:[['emoji','Эмодзи'],['circle','Круг'],['bar','Полоса']]},
+    {key:'voiceWave',label:'Стиль волны голосовых',type:'select',options:[['classic','Классика'],['wave','Волна'],['dots','Точки']]},
+    {key:'bubbleBorder',label:'Обводка сообщений',type:'toggle'},
+    {key:'soundOn',label:'Звук уведомлений',type:'toggle'}
+  ];
+  const PRIVACY_SETTINGS=[
+    {key:'profile_photos',label:'Фотографии профиля',desc:'Кто может видеть ваши фото профиля.'},
+    {key:'forward_messages',label:'Пересылка сообщений',desc:'Кто может пересылать ваши сообщения.'},
+    {key:'birthday',label:'День рождения',desc:'Кто видит дату рождения.'},
+    {key:'bio',label:'О себе',desc:'Описание профиля.'},
+    {key:'last_seen',label:'Время посещения',desc:'Кто видит последнее посещение.'},
+    {key:'phone',label:'Номер телефона',desc:'Кто видит номер.'},
+    {key:'calls',label:'Звонки',desc:'Кто может звонить.'},
+    {key:'voice',label:'Голосовые сообщения',desc:'Кто может отправлять голосовые.'},
+    {key:'groups_invite',label:'Приглашения в группы',desc:'Кто может приглашать в группы.'},
+    {key:'channels_invite',label:'Приглашения в каналы',desc:'Кто может приглашать в каналы.'}
+  ];
+  return(
+    <>
+    <Mdl open={open} onClose={onClose} title="Настройки" maxWidth={600}>
+      <div className="tabs" style={{marginBottom:20}}>
+        <button className={`tab ${tab==='profile'?'on':''}`} onClick={()=>setTab('profile')}>Профиль</button>
+        <button className={`tab ${tab==='look'?'on':''}`} onClick={()=>setTab('look')}>Внешний вид</button>
+      </div>
+      {tab==='profile'&&(<div>
+        <div style={{textAlign:'center',marginBottom:20}}>
+          <AvSquare src={profile.avatar} size={88} frame={profile.equippedFrame} username={profile.username}>
+            <label className="av-edit-btn"><Icon name="photo_camera" size={15}/><input type="file" accept="image/*" hidden onChange={uploadAv}/></label>
+          </AvSquare>
+        </div>
+        <label className="label">Ник</label>
+        <input className="input-field" value={username} onChange={e=>setUsername(e.target.value)} style={{marginBottom:14}}/>
+        <label className="label">О себе</label>
+        <textarea className="input-field" value={desc} onChange={e=>setDesc(e.target.value)} rows={3} style={{marginBottom:14,resize:'none'}}/>
+        <div className="section-title">Тема оформления</div>
+        <div className="theme-switch" style={{marginBottom:16}}>
+          <button className={profile.theme!=='light'?'on':''} onClick={()=>userSvc.update(user.uid,{theme:'dark'})}><Icon name="dark_mode" size={18}/> Тёмная</button>
+          <button className={profile.theme==='light'?'on':''} onClick={()=>userSvc.update(user.uid,{theme:'light'})}><Icon name="light_mode" size={18}/> Светлая</button>
+        </div>
+        <button className="btn btn-primary btn-full" onClick={save} disabled={busy}>Сохранить</button>
+      </div>)}
+      {tab==='look'&&(<div>
+        <div className="section-title">Фон чата</div>
+        <div style={{display:'flex',gap:10,alignItems:'center',marginBottom:16,flexWrap:'wrap'}}>
+          <img src={d.chatBackground||DEFAULT_BG} alt="" style={{width:64,height:64,borderRadius:'var(--r-md)',objectFit:'cover',border:'1px solid var(--glass-border)'}}/>
+          <label className="btn btn-secondary btn-sm" style={{cursor:'pointer'}}>Загрузить<input type="file" accept="image/*" hidden onChange={uploadChatBg}/></label>
+          <button className="btn btn-danger btn-sm" onClick={()=>{dUpdate('chatBackground',DEFAULT_BG);u.toast('Фон сброшен');}}>Сбросить</button>
+        </div>
+        {DESIGN_SETTINGS.map(s=>{
+          if(s.type==='select')return(
+            <div key={s.key} style={{marginBottom:14}}>
+              <div className="section-title" style={{padding:'8px 0 6px'}}>{s.label}</div>
+              <select className="input-field" value={d[s.key]||s.options[0][0]} onChange={e=>dUpdate(s.key,e.target.value)}>
+                {s.options.map(([v,l])=><option key={v} value={v}>{l}</option>)}
+              </select>
+            </div>
+          );
+          if(s.type==='range')return(
+            <div key={s.key} style={{marginBottom:14}}>
+              <div className="section-title" style={{padding:'8px 0 6px'}}>{s.label}: {d[s.key]||(s.key==='messageRadius'?16:s.key==='messageOpacity'?100:s.key==='fontSize'?14:s.key==='lineHeight'?145:145)}{s.unit}</div>
+              <input type="range" min={s.min} max={s.max} value={d[s.key]||(s.key==='messageRadius'?16:s.key==='messageOpacity'?100:s.key==='fontSize'?14:s.key==='lineHeight'?145:145)} onChange={e=>dUpdate(s.key,+e.target.value)}/>
+            </div>
+          );
+          if(s.type==='toggle'){
+            const val=s.defaultTrue?(d[s.key]!==false):(d[s.key]===true);
+            return(
+              <div key={s.key} className="settings-row">
+                <span className="settings-label">{s.label}</span>
+                <button className={`toggle ${val?'on':''}`} onClick={()=>dUpdate(s.key,!val)}/>
+              </div>
+            );
+          }
+          return null;
+        })}
+      </div>)}
+      {tab==='msgr'&&(<div>
+        <div className="section-title">Конфиденциальность</div>
+        {PRIVACY_SETTINGS.map(p=>{
+          const privacy=profile.privacy||{};
+          return(
+            <div key={p.key} style={{padding:'12px 0',borderBottom:'1px solid var(--glass-border)'}}>
+              <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:4,gap:12}}>
+                <div style={{fontSize:14,fontWeight:600,flex:1}}>{p.label}</div>
+                <select className="input-field" value={privacy[p.key]||'all'} onChange={e=>db.ref(`users/${user.uid}/privacy/${p.key}`).set(e.target.value)} style={{width:'auto',padding:'8px 32px 8px 12px',fontSize:12.5}}>
+                  <option value="all">Все</option><option value="friends">Друзья</option><option value="nobody">Никто</option>
+                </select>
+              </div>
+              <div style={{fontSize:12,color:'var(--t-lo)'}}>{p.desc}</div>
+            </div>
+          );
+        })}
+        <div style={{marginTop:16}}>
+          <button className="btn btn-secondary btn-full" onClick={()=>setBlockedOpen(true)} style={{marginBottom:10}}>
+            <Icon name="block" size={18}/> Заблокированные друзья
+          </button>
+        </div>
+        <div className="settings-row"><span className="settings-label">Скрывать автора при пересылке</span><button className={`toggle ${d.forwardHideAuthor?'on':''}`} onClick={()=>dUpdate('forwardHideAuthor',!d.forwardHideAuthor)}/></div>
+      </div>)}
+      <div style={{marginTop:24,paddingTop:18,borderTop:'1px solid var(--glass-border)'}}>
+        <button className="btn btn-danger btn-full" onClick={()=>{auth.signOut();onClose();}}><Icon name="logout" size={18}/> Выйти</button>
+      </div>
+    </Mdl>
+    <BlockedListModal open={blockedOpen} onClose={()=>setBlockedOpen(false)} user={user}/>
+    </>
+  );
+}
+
+/* ===== BLOCKED LIST ===== */
+function BlockedListModal({open,onClose,user}){
+  const [blocked,setBlocked]=useState([]);
+  const [loading,setLoading]=useState(true);
+  useEffect(()=>{
+    if(!open)return;
+    setLoading(true);
+    const r=db.ref(`blocks/${user.uid}`);
+    const h=r.on('value',async s=>{
+      const val=s.val()||{};
+      const list=[];
+      for(const [uid,data] of Object.entries(val)){
+        const p=await userSvc.get(uid);
+        if(p)list.push({uid,username:p.username,user:p.user,avatar:p.avatar,timestamp:data.timestamp});
+      }
+      setBlocked(list.sort((a,b)=>b.timestamp-a.timestamp));
+      setLoading(false);
+    });
+    return()=>r.off('value',h);
+  },[open,user.uid]);
+  const unblock=async(uid)=>{await frSvc.unblock(user.uid,uid);u.toast('Разблокирован');};
+  return(
+    <Mdl open={open} onClose={onClose} title="Заблокированные друзья" maxWidth={500}>
+      {loading?<div style={{textAlign:'center',padding:30}}><div className="spinner"/></div>:
+      blocked.length===0?<div style={{textAlign:'center',padding:30,color:'var(--t-faint)'}}>Нет заблокированных</div>:
+      blocked.map(b=>(
+        <div key={b.uid} className="blocked-item">
+          <AvRound src={b.avatar} size={44} username={b.username}/>
+          <div className="blocked-info">
+            <div className="blocked-name">{b.username}</div>
+            <div className="blocked-user">@{b.user}</div>
+            <div className="blocked-date">Заблокирован: {u.fullDate(b.timestamp)}</div>
+          </div>
+          <button className="btn btn-success btn-sm" onClick={()=>unblock(b.uid)}>Разблокировать</button>
+        </div>
+      ))}
+    </Mdl>
+  );
+}
+
+/* ===== GROUP SETTINGS ===== */
+function GroupSettingsModal({open,onClose,group,user,profile,allFriends,onDeleted,onLeft}){
+  const confirm=useConfirm();
+  const [tab,setTab]=useState('edit');
+  const [name,setName]=useState(group?.name||'');
+  const [desc,setDesc]=useState(group?.description||'');
+  const [members,setMembers]=useState([]);
+  const [blacklist,setBlacklist]=useState([]);
+  const [showInvite,setShowInvite]=useState(false);
+  const [busy,setBusy]=useState(false);
+  const [keyVal,setKeyVal]=useState(group?.joinKey||'');
+  const isOwner=group?.ownerId===user.uid;
+  const canMng=isOwner||can(group,user.uid,'manage_group');
+  useEffect(()=>{
+    if(!open||!group)return;
+    setKeyVal(group.joinKey||'');
+    const mref=db.ref(`groups/${group.id}/members`);
+    const mh=mref.on('value',async s=>{const val=s.val()||{};const list=await Promise.all(Object.entries(val).map(async([uid,dd])=>{const pu=await userSvc.get(uid);return{uid,username:pu?.username||uid.slice(0,8),avatar:pu?.avatar||'',role:dd.role||'member'};}));setMembers(list);});
+    const bref=db.ref(`groups/${group.id}/blacklist`);
+    const bh=bref.on('value',s=>setBlacklist(Object.entries(s.val()||{}).map(([uid,dd])=>({uid,...dd}))));
+    return()=>{mref.off('value',mh);bref.off('value',bh);};
+  },[open,group?.id]);
+  const saveInfo=async()=>{setBusy(true);try{await grpSvc.update(group.id,{name:name.trim(),description:desc.trim()});u.toast('Сохранено');}finally{setBusy(false);}};
+  const uploadAvatar=e=>{const f=e.target.files?.[0];if(!f)return;const r=new FileReader();r.onloadend=async()=>{await grpSvc.update(group.id,{avatar:r.result});u.toast('Обновлено');};r.readAsDataURL(f);};
+  const delGrp=async()=>{const ok=await confirm({title:'Удалить?',danger:true,confirmText:'Да'});if(!ok)return;await grpSvc.delete(group.id);onClose();onDeleted?.();};
+  const leaveGrp=async()=>{const ok=await confirm({title:'Покинуть?',danger:true,confirmText:'Да'});if(!ok)return;await grpSvc.leave(group.id,user.uid);onClose();onLeft?.();};
+  if(!group)return null;
+  return(
+    <Mdl open={open} onClose={onClose} title="Управление группой" maxWidth={560}>
+      <div className="tabs" style={{marginBottom:20}}>
+        <button className={`tab ${tab==='edit'?'on':''}`} onClick={()=>setTab('edit')}>Основное</button>
+        <button className={`tab ${tab==='members'?'on':''}`} onClick={()=>setTab('members')}>Участники</button>
+        <button className={`tab ${tab==='bl'?'on':''}`} onClick={()=>setTab('bl')}>ЧС</button>
+      </div>
+      {tab==='edit'&&(<div>
+        <div className="channel-avatar">
+          {group.avatar?<img src={group.avatar} alt=""/>:<Icon name="photo_camera" size={28} style={{color:'var(--danger)'}}/>}
+          {canMng&&<input type="file" accept="image/*" onChange={uploadAvatar}/>}
+        </div>
+        <label className="label">Название</label>
+        <input className="input-field" value={name} onChange={e=>setName(e.target.value)} disabled={!canMng} style={{marginBottom:12}}/>
+        <label className="label">Описание</label>
+        <textarea className="input-field" value={desc} onChange={e=>setDesc(e.target.value)} disabled={!canMng} rows={2} style={{marginBottom:14,resize:'none'}}/>
+        <label className="label">Ключ приглашения</label>
+        <div style={{display:'flex',gap:8,marginBottom:14}}>
+          <div className="input-field" style={{fontFamily:'monospace',flex:1,wordBreak:'break-all'}}>{keyVal||'—'}</div>
+          <button className="copy-key-btn" onClick={()=>u.copyText(keyVal)} title="Копировать"><Icon name="content_copy" size={16}/> Копировать</button>
+        </div>
+        {canMng&&<button className="btn btn-primary btn-full" onClick={saveInfo} disabled={busy} style={{marginBottom:10}}>Сохранить</button>}
+        {isOwner&&<button className="btn btn-danger btn-full" onClick={delGrp}>Удалить группу</button>}
+        {!isOwner&&<button className="btn btn-danger btn-full" onClick={leaveGrp}>Покинуть</button>}
+      </div>)}
+      {tab==='members'&&(<div>
+        {canMng&&<button className="btn btn-primary btn-full" onClick={()=>setShowInvite(true)} style={{marginBottom:14}}>+ Добавить друзей</button>}
+        {members.map(m=>(<div key={m.uid} style={{display:'flex',alignItems:'center',gap:12,padding:11,background:'var(--bg-elev-1)',borderRadius:'var(--r-md)',marginBottom:6}}>
+          <AvRound src={m.avatar} size={40} username={m.username}/>
+          <div className="f1"><div style={{fontWeight:600,fontSize:13.5}}>{m.username}</div><span className="role-chip">{group.roles?.[m.role]?.name||m.role}</span></div>
+        </div>))}
+      </div>)}
+      {tab==='bl'&&(<div>
+        {blacklist.length===0&&<div style={{textAlign:'center',padding:30,color:'var(--t-faint)'}}>ЧС пуст</div>}
+        {blacklist.map(b=>(<div key={b.uid} style={{display:'flex',alignItems:'center',gap:12,padding:10,background:'var(--bg-elev-1)',borderRadius:'var(--r-md)',marginBottom:6}}>
+          <AvRound src={b.avatar} size={38} username={b.username}/>
+          <div className="f1"><div style={{fontWeight:600,fontSize:13.5}}>{b.username}</div></div>
+          {canMng&&<button className="btn btn-success btn-sm" onClick={()=>db.ref(`groups/${group.id}/blacklist/${b.uid}`).remove()}>Убрать</button>}
+        </div>))}
+      </div>)}
+      {showInvite&&(<Mdl open onClose={()=>setShowInvite(false)} title="Добавить друзей">
+        {allFriends.map(f=>{const inGrp=members.some(m=>m.uid===f.uid);return(
+          <div key={f.uid} style={{display:'flex',alignItems:'center',gap:12,padding:10,background:'var(--bg-elev-1)',borderRadius:'var(--r-md)',marginBottom:6}}>
+            <AvRound src={f.avatar} size={40} username={f.username}/>
+            <div className="f1"><div style={{fontWeight:600,fontSize:13.5}}>{f.username}</div></div>
+            {inGrp?<span style={{fontSize:12,color:'var(--t-faint)'}}>В группе</span>:<button className="btn btn-primary btn-sm" onClick={async()=>{await grpSvc.join(group.id,f.uid,f);u.toast('Добавлен');}}>Добавить</button>}
+          </div>
+        );})}
+      </Mdl>)}
+    </Mdl>
+  );
+}
+
+/* ===== CREATE GROUP / CHANNEL ===== */
+function CreateGroupModal({open,onClose,user,onCreated}){
+  const [name,setName]=useState('');
+  const [desc,setDesc]=useState('');
+  const [avatar,setAvatar]=useState(null);
+  const [busy,setBusy]=useState(false);
+  useEffect(()=>{if(open){setName('');setDesc('');setAvatar(null);}},[open]);
+  const uploadAvatar=e=>{const f=e.target.files?.[0];if(!f)return;const r=new FileReader();r.onloadend=()=>setAvatar(r.result);r.readAsDataURL(f);};
+  const create=async()=>{
+    if(!name.trim())return u.toast('Название');
+    setBusy(true);
+    try{const gid=await grpSvc.create({name:name.trim(),description:desc.trim(),avatar:avatar||`https://api.dicebear.com/7.x/identicon/svg?seed=${Date.now()}`},user.uid);onCreated(gid);onClose();}
+    finally{setBusy(false);}
+  };
+  return(
+    <Mdl open={open} onClose={onClose} title="Создать группу">
+      <div className="channel-avatar">
+        {avatar?<img src={avatar} alt=""/>:<Icon name="photo_camera" size={28} style={{color:'var(--danger)'}}/>}
+        <input type="file" accept="image/*" onChange={uploadAvatar}/>
+      </div>
+      <input className="input-field" placeholder="Название" value={name} onChange={e=>setName(e.target.value)} style={{marginBottom:12}}/>
+      <textarea className="input-field" placeholder="Описание" value={desc} onChange={e=>setDesc(e.target.value)} rows={2} style={{resize:'none'}}/>
+      <button className="btn btn-primary btn-full" style={{marginTop:14}} onClick={create} disabled={busy}>{busy?'...':'Создать'}</button>
+    </Mdl>
+  );
+}
+function ChannelCreateModal({open,onClose,user,onCreated}){
+  const [step,setStep]=useState(1);
+  const [name,setName]=useState('');
+  const [desc,setDesc]=useState('');
+  const [channelType,setChannelType]=useState('public');
+  const [avatar,setAvatar]=useState(null);
+  const [joinKey,setJoinKey]=useState('');
+  const [busy,setBusy]=useState(false);
+  useEffect(()=>{if(open){setStep(1);setName('');setDesc('');setChannelType('public');setAvatar(null);setJoinKey(u.genKey());}},[open]);
+  const uploadAvatar=e=>{const f=e.target.files?.[0];if(!f)return;const r=new FileReader();r.onloadend=()=>setAvatar(r.result);r.readAsDataURL(f);};
+  const create=async()=>{
+    if(!name.trim())return u.toast('Название');
+    setBusy(true);
+    try{
+      const gid=await grpSvc.create({name:name.trim(),description:desc.trim(),isChannel:true,avatar:avatar||`https://api.dicebear.com/7.x/identicon/svg?seed=${Date.now()}`,linkType:channelType,joinKey},user.uid);
+      onCreated(gid);onClose();
+    }finally{setBusy(false);}
+  };
+  return(
+    <Mdl open={open} onClose={onClose} title={step===1?'Новый канал':'Тип канала'} maxWidth={520}>
+      {step===1&&(<div>
+        <div className="channel-avatar">
+          {avatar?<img src={avatar} alt=""/>:<Icon name="photo_camera" size={32} style={{color:'var(--danger)'}}/>}
+          <input type="file" accept="image/*" onChange={uploadAvatar}/>
+        </div>
+        <label className="label">Название канала</label>
+        <input className="input-field" placeholder="Название" value={name} onChange={e=>setName(e.target.value)} autoFocus style={{marginBottom:14}}/>
+        <label className="label">Описание</label>
+        <textarea className="input-field" placeholder="Описание (необязательно)" value={desc} onChange={e=>setDesc(e.target.value)} rows={2} style={{resize:'none'}}/>
+        <div style={{display:'flex',gap:10,marginTop:20,justifyContent:'flex-end'}}>
+          <button className="btn btn-secondary" onClick={onClose}>Отмена</button>
+          <button className="btn btn-primary" onClick={()=>setStep(2)} disabled={!name.trim()}>Далее</button>
+        </div>
+      </div>)}
+      {step===2&&(<div>
+        <div className={`channel-type-option ${channelType==='public'?'selected':''}`} onClick={()=>setChannelType('public')}>
+          <div className="channel-type-radio"/>
+          <div><div className="channel-type-title">Публичный</div><div className="channel-type-desc">Все могут найти и подписаться.</div></div>
+        </div>
+        <div className={`channel-type-option ${channelType==='private'?'selected':''}`} onClick={()=>setChannelType('private')}>
+          <div className="channel-type-radio"/>
+          <div><div className="channel-type-title">Частный</div><div className="channel-type-desc">Только по ключу, автор принимает заявки.</div></div>
+        </div>
+        <div className={`channel-type-option ${channelType==='secret'?'selected':''}`} onClick={()=>setChannelType('secret')}>
+          <div className="channel-type-radio"/>
+          <div><div className="channel-type-title">Приватный</div><div className="channel-type-desc">Ключ нельзя сменить.</div></div>
+        </div>
+        <div style={{marginTop:14,padding:12,background:'var(--bg-elev-2)',borderRadius:'var(--r-md)',fontSize:12.5,color:'var(--t-lo)',display:'flex',alignItems:'center',gap:8}}>
+          <span>Ключ:</span>
+          <span style={{fontFamily:'monospace',color:'var(--t-hi)',flex:1,wordBreak:'break-all'}}>{joinKey}</span>
+          <button className="copy-key-btn" onClick={()=>u.copyText(joinKey)}><Icon name="content_copy" size={14}/></button>
+        </div>
+        <div style={{display:'flex',gap:10,marginTop:20,justifyContent:'flex-end'}}>
+          <button className="btn btn-secondary" onClick={()=>setStep(1)}>Назад</button>
+          <button className="btn btn-primary" onClick={create} disabled={busy}>{busy?'...':'Создать'}</button>
+        </div>
+      </div>)}
+    </Mdl>
+  );
+}
+
+/* ===== CHANNEL SETTINGS ===== */
+function ChannelSettingsModal({open,onClose,channel,user,profile,allFriends,onDeleted,onLeft}){
+  const confirm=useConfirm();
+  const [tab,setTab]=useState('edit');
+  const [name,setName]=useState('');
+  const [desc,setDesc]=useState('');
+  const [channelType,setChannelType]=useState('public');
+  const [soundEnabled,setSoundEnabled]=useState(true);
+  const [members,setMembers]=useState([]);
+  const [admins,setAdmins]=useState([]);
+  const [showAddAdmin,setShowAddAdmin]=useState(false);
+  const [adminNick,setAdminNick]=useState('');
+  const [adminRes,setAdminRes]=useState(null);
+  const [showAddSub,setShowAddSub]=useState(false);
+  const [joinKey,setJoinKey]=useState('');
+  const [busy,setBusy]=useState(false);
+  const [chLive,setChLive]=useState(channel);
+  const isOwner=chLive?.ownerId===user.uid;
+  const canMng=isOwner||isAdminOf(chLive,user.uid);
+  const canAdmins=isOwner||can(chLive,user.uid,'add_admins');
+  const canSubs=isOwner||can(chLive,user.uid,'add_users');
+  useEffect(()=>{if(!open||!channel)return;const r=db.ref(`groups/${channel.id}`);const h=r.on('value',s=>setChLive(s.val()));return()=>r.off('value',h);},[open,channel?.id]);
+  useEffect(()=>{
+    if(!open||!chLive)return;
+    setName(chLive.name||'');setDesc(chLive.description||'');setChannelType(chLive.linkType||'public');setSoundEnabled(chLive.settings?.soundEnabled!==false);setJoinKey(chLive.joinKey||'');
+    const mref=db.ref(`groups/${chLive.id}/members`);
+    const mh=mref.on('value',async s=>{const val=s.val()||{};const list=await Promise.all(Object.entries(val).map(async([uid,dd])=>{const pu=await userSvc.get(uid);return{uid,username:pu?.username||uid.slice(0,8),avatar:pu?.avatar||'',role:dd.role||'member'};}));setMembers(list);});
+    const aref=db.ref(`groups/${chLive.id}/admins`);
+    const ah=aref.on('value',async s=>{const val=s.val()||{};const list=await Promise.all(Object.entries(val).map(async([uid,dd])=>{const pu=await userSvc.get(uid);return{uid,username:pu?.username||uid.slice(0,8),avatar:pu?.avatar||'',permissions:dd.permissions||{}};}));setAdmins(list);});
+    return()=>{mref.off('value',mh);aref.off('value',ah);};
+  },[open,chLive?.id]);
+  const saveInfo=async()=>{setBusy(true);try{await grpSvc.update(chLive.id,{name:name.trim(),description:desc.trim(),linkType:channelType,'settings/soundEnabled':soundEnabled});u.toast('Сохранено');}finally{setBusy(false);}};
+  const uploadAvatar=e=>{const f=e.target.files?.[0];if(!f)return;const r=new FileReader();r.onloadend=async()=>{await grpSvc.update(chLive.id,{avatar:r.result});u.toast('Обновлено');};r.readAsDataURL(f);};
+  const addAdmin=async()=>{if(!adminRes)return;await db.ref(`groups/${chLive.id}/admins/${adminRes.uid}`).set({permissions:{send:true,manage_posts:true,add_users:true,access_messages:true,block_users:true},appointedBy:profile.username,appointedAt:Date.now()});setShowAddAdmin(false);setAdminRes(null);setAdminNick('');u.toast('Админ добавлен');};
+  const removeAdmin=async(uid)=>{await db.ref(`groups/${chLive.id}/admins/${uid}`).remove();u.toast('Снят');};
+  const addSubscriber=async friend=>{if(members.find(m=>m.uid===friend.uid))return u.toast('Уже');await grpSvc.join(chLive.id,friend.uid,friend);u.toast('Добавлен');};
+  const removeSub=async(uid)=>{await grpSvc.leave(chLive.id,uid);u.toast('Удалён');};
+  const delCh=async()=>{const ok=await confirm({title:'Удалить?',danger:true,confirmText:'Да'});if(!ok)return;await grpSvc.delete(chLive.id);onClose();onDeleted?.();};
+  const leaveCh=async()=>{const ok=await confirm({title:'Покинуть?',danger:true,confirmText:'Да'});if(!ok)return;await grpSvc.leave(chLive.id,user.uid);onClose();onLeft?.();};
+  if(!chLive)return null;
+  return(
+    <>
+    <Mdl open={open} onClose={onClose} title="Редактировать канал" maxWidth={560}>
+      <div className="tabs" style={{marginBottom:20}}>
+        <button className={`tab ${tab==='edit'?'on':''}`} onClick={()=>setTab('edit')}>Основное</button>
+        <button className={`tab ${tab==='admins'?'on':''}`} onClick={()=>setTab('admins')}>Администраторы</button>
+        <button className={`tab ${tab==='subs'?'on':''}`} onClick={()=>setTab('subs')}>Подписчики</button>
+      </div>
+      {tab==='edit'&&(<div>
+        <div className="channel-avatar">
+          {chLive.avatar?<img src={chLive.avatar} alt=""/>:<Icon name="photo_camera" size={28} style={{color:'var(--danger)'}}/>}
+          {canMng&&<input type="file" accept="image/*" onChange={uploadAvatar}/>}
+        </div>
+        <label className="label">Название</label>
+        <input className="input-field" value={name} onChange={e=>setName(e.target.value)} disabled={!canMng} style={{marginBottom:12}}/>
+        <label className="label">Описание</label>
+        <textarea className="input-field" value={desc} onChange={e=>setDesc(e.target.value)} disabled={!canMng} rows={2} style={{marginBottom:14,resize:'none'}}/>
+        <div className="section-title">Тип канала</div>
+        <div style={{display:'flex',gap:8,marginBottom:12}}>
+          {[['public','Публичный'],['private','Частный'],['secret','Приватный']].map(([v,l])=>(
+            <button key={v} className={`tab ${channelType===v?'on':''}`} onClick={()=>canMng&&setChannelType(v)} style={{flex:1,fontSize:12}}>{l}</button>
+          ))}
+        </div>
+        <label className="label">Ключ</label>
+        <div style={{display:'flex',gap:8,marginBottom:14}}>
+          <div className="input-field" style={{fontFamily:'monospace',flex:1,wordBreak:'break-all'}}>{joinKey||'—'}</div>
+          <button className="copy-key-btn" onClick={()=>u.copyText(joinKey)}><Icon name="content_copy" size={16}/> Копировать</button>
+        </div>
+        <div className="settings-row">
+          <span className="settings-label">Звук уведомлений канала</span>
+          <button className={`toggle ${soundEnabled?'on':''}`} onClick={()=>canMng&&setSoundEnabled(!soundEnabled)}/>
+        </div>
+        {canMng&&<button className="btn btn-primary btn-full" onClick={saveInfo} disabled={busy} style={{marginTop:14,marginBottom:10}}>Сохранить</button>}
+        {isOwner&&<button className="btn btn-danger btn-full" onClick={delCh}>Удалить канал</button>}
+        {!isOwner&&<button className="btn btn-danger btn-full" onClick={leaveCh}>Покинуть</button>}
+      </div>)}
+      {tab==='admins'&&(<div>
+        {canAdmins&&<button className="btn btn-primary btn-full" onClick={()=>setShowAddAdmin(true)} style={{marginBottom:14}}>+ Добавить админа</button>}
+        {admins.map(a=>(<div key={a.uid} style={{display:'flex',alignItems:'center',gap:12,padding:11,background:'var(--bg-elev-1)',borderRadius:'var(--r-md)',marginBottom:6}}>
+          <AvRound src={a.avatar} size={40} username={a.username}/>
+          <div className="f1"><div style={{fontWeight:600,fontSize:13.5}}>{a.username}</div></div>
+          {canAdmins&&<button className="ibtn" onClick={()=>removeAdmin(a.uid)} style={{color:'var(--danger)'}}><Icon name="delete" size={18}/></button>}
+        </div>))}
+      </div>)}
+      {tab==='subs'&&(<div>
+        <div style={{display:'flex',justifyContent:'space-between',marginBottom:14}}>
+          <span style={{fontWeight:600}}>Подписчики</span>
+          <span style={{color:'var(--t-lo)'}}>{members.length}</span>
+        </div>
+        {canSubs&&<button className="btn btn-primary btn-full" onClick={()=>setShowAddSub(true)} style={{marginBottom:14}}>+ Добавить</button>}
+        {members.map(m=>(<div key={m.uid} style={{display:'flex',alignItems:'center',gap:12,padding:10,background:'var(--bg-elev-1)',borderRadius:'var(--r-md)',marginBottom:6}}>
+          <AvRound src={m.avatar} size={40} username={m.username}/>
+          <div className="f1"><div style={{fontWeight:600,fontSize:13.5}}>{m.username}</div></div>
+          {canSubs&&m.uid!==chLive.ownerId&&<button className="ibtn" onClick={()=>removeSub(m.uid)} style={{color:'var(--danger)'}}><Icon name="person_remove" size={18}/></button>}
+        </div>))}
+      </div>)}
+    </Mdl>
+    {showAddAdmin&&(<Mdl open onClose={()=>{setShowAddAdmin(false);setAdminRes(null);}} title="Добавить админа">
+      <div className="flex g2" style={{marginBottom:12}}>
+        <input className="input-field" placeholder="Юзер или ник" value={adminNick} onChange={e=>setAdminNick(e.target.value)}/>
+        <button className="btn btn-primary" onClick={async()=>{const x=await userSvc.findAny(adminNick.trim());if(!x)return u.toast('Не найден');setAdminRes({uid:x.uid,username:x.username,avatar:x.avatar});}}>Найти</button>
+      </div>
+      {adminRes&&(<div style={{display:'flex',alignItems:'center',gap:12,padding:11,background:'var(--bg-elev-1)',borderRadius:'var(--r-md)'}}>
+        <AvRound src={adminRes.avatar} size={42} username={adminRes.username}/>
+        <div className="f1"><div style={{fontWeight:600}}>{adminRes.username}</div></div>
+        <button className="btn btn-primary btn-sm" onClick={addAdmin}>Назначить</button>
+      </div>)}
+    </Mdl>)}
+    {showAddSub&&(<Mdl open onClose={()=>setShowAddSub(false)} title="Добавить участников">
+      {allFriends.map(f=>{const inCh=members.some(m=>m.uid===f.uid);return(
+        <div key={f.uid} style={{display:'flex',alignItems:'center',gap:12,padding:10,borderRadius:'var(--r-md)',marginBottom:4}}>
+          <AvRound src={f.avatar} size={44} username={f.username}/>
+          <div className="f1"><div style={{fontWeight:600,fontSize:14}}>{f.username}</div></div>
+          {inCh?<span style={{fontSize:12,color:'var(--t-faint)'}}>В канале</span>:<button className="btn btn-primary btn-sm" onClick={()=>addSubscriber(f)}>Добавить</button>}
+        </div>
+      );})}
+    </Mdl>)}
+    </>
+  );
+}
+
+/* ===== VOICE RECORDER ===== */
+function VoiceRecorder({onCancel,onSend}){
+  const [seconds,setSeconds]=useState(0);
+  const recRef=useRef(null);
+  const chunksRef=useRef([]);
+  const streamRef=useRef(null);
+  const timerRef=useRef(null);
+  useEffect(()=>{
+    let cancelled=false;
+    const start=async()=>{
+      try{
+        const stream=await navigator.mediaDevices.getUserMedia({audio:true});
+        if(cancelled){stream.getTracks().forEach(t=>t.stop());return;}
+        streamRef.current=stream;
+        const mr=new MediaRecorder(stream);
+        recRef.current=mr;chunksRef.current=[];
+        mr.ondataavailable=e=>{if(e.data.size>0)chunksRef.current.push(e.data)};
+        mr.start();
+        timerRef.current=setInterval(()=>setSeconds(s=>s+1),1000);
+      }catch(e){u.toast('Нет доступа к микрофону');}
+    };
+    start();
+    return()=>{cancelled=true;if(timerRef.current)clearInterval(timerRef.current);try{recRef.current?.stop()}catch{}if(streamRef.current)streamRef.current.getTracks().forEach(t=>t.stop());};
+  },[]);
+  const handleSend=()=>{
+    if(timerRef.current)clearInterval(timerRef.current);
+    const mr=recRef.current;
+    if(!mr){onCancel();return;}
+    mr.onstop=()=>{const blob=new Blob(chunksRef.current,{type:'audio/webm'});const reader=new FileReader();reader.onloadend=()=>onSend(reader.result,seconds,blob.size);reader.readAsDataURL(blob);};
+    try{mr.stop()}catch{}
+    if(streamRef.current)streamRef.current.getTracks().forEach(t=>t.stop());
+  };
+  const handleCancel=()=>{if(timerRef.current)clearInterval(timerRef.current);try{recRef.current?.stop()}catch{}if(streamRef.current)streamRef.current.getTracks().forEach(t=>t.stop());onCancel();};
+  return(
+    <div className="voice-overlay">
+      <div className="voice-circle"><div className="voice-pulse"/><Icon name="mic" size={56} style={{color:'var(--danger)',zIndex:1}}/></div>
+      <div className="voice-timer">{u.fmtDur(seconds)}</div>
+      <div style={{fontSize:14,color:'var(--t-lo)'}}>Идёт запись...</div>
+      <div style={{display:'flex',gap:20,marginTop:24}}>
+        <button className="ibtn" style={{background:'var(--danger-soft)',color:'var(--danger)',width:60,height:60}} onClick={handleCancel}><Icon name="close" size={28}/></button>
+        <button className="ibtn" style={{background:'var(--success-soft)',color:'var(--success)',width:60,height:60}} onClick={handleSend}><Icon name="check" size={28}/></button>
+      </div>
+    </div>
+  );
+}
+
+/* ===== VOICE MSG (with waveStyle) ===== */
+const VoiceMsg=memo(({msg,isOwn,showMeta,senderName,waveStyle='classic'})=>{
+  const ar=useRef(null);
+  const [play,setPlay]=useState(false);
+  const [prog,setProg]=useState(0);
+  const [cur,setCur]=useState(0);
+  const bars=useMemo(()=>Array.from({length:28}).map(()=>4+Math.random()*20),[msg.id]);
+  const dur=msg.voiceDuration||0;
+  return(
+    <div style={{display:'flex',flexDirection:'column',alignItems:isOwn?'flex-end':'flex-start',gap:4}}>
+      {showMeta&&!isOwn&&<div className="msg-meta"><span style={{fontWeight:600}}>{senderName}</span><span>{u.time(msg.timestamp)}</span></div>}
+      <div className="voice-card">
+        <audio ref={ar} src={msg.content} onTimeUpdate={e=>{const a=e.target;setCur(a.currentTime);setProg((a.currentTime/(a.duration||dur))*100||0);}} onEnded={()=>setPlay(false)}/>
+        <button className="voice-play" onClick={()=>{const a=ar.current;if(!a)return;if(play)a.pause();else a.play();setPlay(!play);}}><Icon name={play?'pause':'play_arrow'} size={22}/></button>
+        <div style={{flex:1,minWidth:0}}>
+          <div className={`voice-wave style-${waveStyle}`}>{bars.map((h,i)=>(<div key={i} className="voice-bar" style={{height:h,background:(i/bars.length*100)<prog?'var(--accent)':'var(--t-lo)'}}/>))}</div>
+          <div className="voice-meta"><span>{u.fmtDur(cur)}</span><span>{u.fmtDur(dur)}</span></div>
+        </div>
+      </div>
+      {isOwn&&<div style={{fontSize:10.5,color:'var(--t-faint)',padding:'0 4px'}}>{u.time(msg.timestamp)}</div>}
+    </div>
+  );
+});
+
+/* ===== AUDIO MSG ===== */
+const AudioMsg=memo(({msg,isOwn,showMeta,senderName})=>{
+  const audioRef=useRef(null);
+  const [play,setPlay]=useState(false);
+  const [cur,setCur]=useState(0);
+  const [dur,setDur]=useState(0);
+  const fmt=(s)=>{if(!isFinite(s)||s<0)s=0;const m=Math.floor(s/60),ss=Math.floor(s%60);return `${String(m).padStart(2,'0')}:${String(ss).padStart(2,'0')}`;};
+  const toggle=()=>{const a=audioRef.current;if(!a)return;if(play)a.pause();else a.play();setPlay(!play);};
+  const title=msg.fileName||'Аудио';
+  return(
+    <div style={{display:'flex',flexDirection:'column',alignItems:isOwn?'flex-end':'flex-start',gap:4}}>
+      {showMeta&&!isOwn&&<div className="msg-meta"><span style={{fontWeight:600}}>{senderName}</span><span>{u.time(msg.timestamp)}</span></div>}
+      <div className="audio-msg">
+        <audio ref={audioRef} src={msg.content} onTimeUpdate={e=>setCur(e.target.currentTime)} onLoadedMetadata={e=>setDur(e.target.duration)} onEnded={()=>{setPlay(false);setCur(0);}}/>
+        <button className="audio-msg-play" onClick={toggle}><Icon name={play?'pause':'play_arrow'} size={26}/></button>
+        <div className="audio-msg-info">
+          <div className="audio-msg-title">{title}</div>
+          <div className="audio-msg-time">{fmt(cur)} / {fmt(dur||msg.audioDuration||0)}</div>
+          <progress value={cur} max={dur||1}/>
+        </div>
+        <div className="audio-msg-meta">
+          <span>{u.time(msg.timestamp)}</span>
+          {isOwn&&<span className="tick">✓</span>}
+        </div>
+      </div>
+    </div>
+  );
+});
+
+/* ===== STICKER VIEWER ===== */
+const StickerViewer=memo(({sticker,pack,onClose,user})=>{
+  if(!sticker)return null;
+  const [busy,setBusy]=useState(false);
+  const add=async()=>{
+    if(!pack||!pack.authorUid)return u.toast('Пак недоступен');
+    setBusy(true);
+    try{await stickerSvc.copyPack(pack.authorUid,pack.id,user.uid);u.toast(`Пак «${pack.name}» добавлен`);onClose();}
+    catch(e){u.toast(e.message||'Ошибка');}
+    finally{setBusy(false);}
+  };
+  return(
+    <div className="sticker-viewer" onClick={onClose}>
+      <div className="sticker-viewer-card" onClick={e=>e.stopPropagation()}>
+        <img src={sticker} className="sticker-viewer-img" alt=""/>
+        <div className="sticker-viewer-pack">{pack?.name||'Без названия'}</div>
+        <div className="sticker-viewer-author">Автор: {pack?.author||'Неизвестный'}</div>
+        <div style={{display:'flex',gap:10}}>
+          <button className="btn btn-secondary f1" onClick={onClose}>Закрыть</button>
+          {pack?.authorUid&&pack.authorUid!==user?.uid&&<button className="btn btn-primary f1" onClick={add} disabled={busy}>{busy?'...':'Добавить себе'}</button>}
+        </div>
+      </div>
+    </div>
+  );
+});
+
+/* ===== POLL ===== */
+const PollMessage=memo(({msg,myUid,onVote})=>{
+  const poll=msg.poll||{question:msg.content,options:[],votes:{}};
+  const votes=(msg.poll&&msg.poll.votes)||msg.votes||{};
+  const totalVotes=Object.keys(votes).length;
+  const myVote=votes[myUid];
+  const endsAt=poll.endsAt||msg.timestamp+24*60*60*1000;
+  const timeLeft=Math.max(0,endsAt-Date.now());
+  const hours=Math.floor(timeLeft/3600000);
+  const [showResults,setShowResults]=useState(false);
+  const canVote=timeLeft>0;
+  return(
+    <div style={{background:'#2c2c2e',borderRadius:'var(--r-lg)',padding:'14px 16px',minWidth:280,maxWidth:360,color:'#fff'}}>
+      <div style={{fontWeight:700,fontSize:15,marginBottom:4,lineHeight:1.3}}>{poll.question}</div>
+      <div style={{fontSize:12,color:'rgba(255,255,255,.5)',marginBottom:14}}>Выберите один или несколько ответов</div>
+      {(poll.options||[]).map((opt,idx)=>{
+        const cnt=Object.values(votes).filter(v=>v===idx).length;
+        const pct=totalVotes?Math.round(cnt/totalVotes*100):0;
+        const mine=myVote===idx;
+        return(
+          <div key={idx} onClick={()=>canVote&&onVote(idx)} style={{display:'flex',alignItems:'center',gap:12,padding:'12px 14px',marginBottom:6,background:'#3a3a3c',borderRadius:10,cursor:canVote?'pointer':'default',position:'relative',overflow:'hidden'}}>
+            {showResults&&<div style={{position:'absolute',inset:0,width:pct+'%',background:'rgba(255,255,255,.08)',transition:'width .3s'}}/>}
+            <div style={{position:'relative',flex:1,display:'flex',justifyContent:'space-between',alignItems:'center',gap:8}}>
+              <span style={{fontSize:13.5,fontWeight:500}}>{opt}</span>
+              {showResults?
+                <span style={{fontSize:12.5,color:'rgba(255,255,255,.6)',fontWeight:600}}>{pct}%</span>
+                :
+                <div style={{width:22,height:22,borderRadius:6,border:mine?'2px solid #0a84ff':'2px solid rgba(255,255,255,.3)',background:mine?'#0a84ff':'transparent',display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0}}>
+                  {mine&&<Icon name="check" size={14} style={{color:'#fff'}}/>}
+                </div>
+              }
+            </div>
+          </div>
+        );
+      })}
+      <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginTop:14,gap:8,fontSize:12,color:'rgba(255,255,255,.55)'}}>
+        <span>{totalVotes} {totalVotes===1?'голос':'голосов'}</span>
+        {canVote&&<span>Осталось: {hours} ч.</span>}
+        <button onClick={()=>setShowResults(!showResults)} style={{background:'transparent',border:'none',color:'#fff',fontSize:12,fontWeight:600,cursor:'pointer',padding:'6px 10px',borderRadius:8,fontFamily:'inherit'}}>{showResults?'Скрыть':'Показать итоги'}</button>
+      </div>
+    </div>
+  );
+});
+
+/* ===== MSG BUBBLE (with design applied) ===== */
+const MsgBubble=memo(({msg,isOwn,showMeta,myUid,design,onReply,onEdit,onDelete,onReact,onOpenProfile,onOpenImage,onContextMenu,onOpenReactionPicker,onOpenSticker})=>{
+  const [hover,setHover]=useState(false);
+  const reactions=msg.reactions||{};
+  const entries=useMemo(()=>{const c={};Object.values(reactions).forEach(e=>{c[e]=(c[e]||0)+1});return Object.entries(c).map(([e,n])=>({emoji:e,count:n,mine:reactions[myUid]===e}));},[reactions,myUid]);
+  const senderProf=useLiveProfile(msg.uid);
+  const senderName=design.forwardHideAuthor&&msg.forwarded?'Скрыто':(senderProf?.username||msg.sender||'User');
+  const ctxHandler=(e)=>{e.preventDefault();onContextMenu?.(e,msg);};
+
+const bubbleStyle=useMemo(()=>{
+  const d=design||{};
+  const alpha=Math.max(0,Math.min(1,(d.messageOpacity!=null?d.messageOpacity:100)/100));
+  return{
+    borderRadius:(d.messageRadius!=null?d.messageRadius:16)+'px',
+    fontSize:d.compactMode?'13.5px':((d.fontSize!=null?d.fontSize:14.5)+'px'),
+    lineHeight:(d.lineHeight!=null?d.lineHeight:145)/100,
+    '--bubble-bg-alpha':String(alpha)
+  };
+},[design]);
+
+  const bubbleClasses=useMemo(()=>{
+    const c=['msg-bubble',`style-${design.messageStyle}`];
+    if(!design.bubbleTail)c.push('no-tail');
+    if(!design.messageShadow)c.push('no-shadow');
+    if(!design.bubbleBorder)c.push('no-border');
+    if(design.compactMode)c.push('compact');
+    if(design.largeEmoji&&msg.type==='text'&&u.isOnlyEmoji(msg.content))c.push('large-emoji');
+    return c.join(' ');
+  },[design,msg.type,msg.content]);
+
+  const reactionsClasses=`reactions style-${design.reactionsStyle}`;
+
+  if(msg.type==='voice'){
+    return(<div onContextMenu={ctxHandler} style={{alignSelf:isOwn?'flex-end':'flex-start',maxWidth:'70%'}}><VoiceMsg msg={msg} isOwn={isOwn} showMeta={showMeta&&design.showAvatars} senderName={senderName} waveStyle={design.voiceWave}/></div>);
+  }
+  if(msg.type==='audio'){
+    return(<div onContextMenu={ctxHandler} style={{alignSelf:isOwn?'flex-end':'flex-start',maxWidth:'70%'}}><AudioMsg msg={msg} isOwn={isOwn} showMeta={showMeta&&design.showAvatars} senderName={senderName}/></div>);
+  }
+  if(msg.type==='image'){
+    return(
+      <div className={`msg-row ${isOwn?'own':'other'}`} onContextMenu={ctxHandler}>
+        <div className="msg-content">
+          {showMeta&&!isOwn&&design.showAvatars&&(<div className="msg-meta"><span style={{fontWeight:600}}>{senderName}</span>{design.timestamps&&<span>{u.time(msg.timestamp)}</span>}</div>)}
+          <img src={msg.content} alt="" onClick={()=>onOpenImage?.(msg.content)} style={{maxWidth:280,maxHeight:340,borderRadius:design.messageRadius+'px',cursor:'pointer',border:design.bubbleBorder?'1px solid var(--glass-border)':'none'}}/>
+        </div>
+      </div>
+    );
+  }
+  if(msg.type==='poll'){
+    const normalizedMsg=msg.poll?msg:{...msg,poll:{question:msg.content,options:msg.options||[],votes:msg.votes||{},endsAt:msg.endsAt}};
+    return(
+      <div className={`msg-row ${isOwn?'own':'other'}`} onContextMenu={ctxHandler}>
+        <div className="msg-content">
+          {showMeta&&!isOwn&&design.showAvatars&&(<div className="msg-meta"><span style={{fontWeight:600}}>{senderName}</span>{design.timestamps&&<span>{u.time(msg.timestamp)}</span>}</div>)}
+          <PollMessage msg={normalizedMsg} myUid={myUid} onVote={(idx)=>onReact?.(msg,'vote:'+idx)}/>
+        </div>
+      </div>
+    );
+  }
+  if(msg.type==='sticker'){
+    return(
+      <div className={`msg-row ${isOwn?'own':'other'}`} onContextMenu={ctxHandler}>
+        <div className="msg-content">
+          {showMeta&&!isOwn&&design.showAvatars&&(<div className="msg-meta"><span style={{fontWeight:600}}>{senderName}</span>{design.timestamps&&<span>{u.time(msg.timestamp)}</span>}</div>)}
+          <img src={msg.content} alt="sticker" onClick={()=>onOpenSticker?.(msg)} style={{width:120,height:120,objectFit:'contain',cursor:'pointer'}}/>
+        </div>
+      </div>
+    );
+  }
+  return(
+    <div className={`msg-row ${isOwn?'own':'other'}`}>
+      <div className="msg-content">
+        {showMeta&&!isOwn&&design.showAvatars&&(<div className="msg-meta"><span style={{fontWeight:600}}>{senderName}</span>{design.timestamps&&<span>{u.time(msg.timestamp)}</span>}</div>)}
+        <div className={bubbleClasses} style={bubbleStyle} onMouseEnter={()=>setHover(true)} onMouseLeave={()=>setHover(false)} onContextMenu={ctxHandler}>
+          {msg.replyTo&&<div className="reply-quote"><div className="rq-author">{design.forwardHideAuthor&&msg.replyTo.forwarded?'Скрыто':msg.replyTo.sender}</div><div className="rq-text">{msg.replyTo.content}</div></div>}
+          <div style={{wordBreak:'break-word'}}>
+            {msg.content}
+            {msg.edited&&<span style={{fontSize:11,opacity:.5,marginLeft:6}}>(изм.)</span>}
+            {design.timestamps&&<span className="msg-time">{u.time(msg.timestamp)}</span>}
+          </div>
+          {hover&&(<div className="msg-actions">
+            <button onClick={e=>{e.stopPropagation();onReply?.(msg);}}><Icon name="reply" size={16}/></button>
+            <button onClick={e=>{e.stopPropagation();onOpenReactionPicker?.(e,msg);}}><Icon name="favorite" size={16}/></button>
+            {isOwn&&<>
+              <button onClick={e=>{e.stopPropagation();onEdit?.(msg);}}><Icon name="edit" size={16}/></button>
+              <button onClick={e=>{e.stopPropagation();onDelete?.(msg);}}><Icon name="delete" size={16}/></button>
+            </>}
+          </div>)}
+        </div>
+        {entries.length>0&&(<div className={reactionsClasses}>
+          {entries.map(({emoji,count,mine})=>(<button key={emoji} className={`reaction-chip ${mine?'mine':''}`} onClick={e=>{e.stopPropagation();onReact?.(msg,emoji);}}><span>{emoji}</span><span>{count}</span></button>))}
+        </div>)}
+      </div>
+    </div>
+  );
+});
+
+/* ===== CREATE POLL ===== */
+function CreatePollModal({open,onClose,onSend}){
+  const [question,setQuestion]=useState('');
+  const [options,setOptions]=useState(['','']);
+  const addOption=()=>options.length<10&&setOptions([...options,'']);
+  const updateOption=(i,v)=>{const n=[...options];n[i]=v;setOptions(n);};
+  const removeOption=i=>options.length>2&&setOptions(options.filter((_,x)=>x!==i));
+  const submit=()=>{
+    if(!question.trim())return u.toast('Введите вопрос');
+    const valid=options.filter(o=>o.trim());
+    if(valid.length<2)return u.toast('Минимум 2 варианта');
+    onSend({question:question.trim(),options:valid,votes:{},endsAt:Date.now()+24*60*60*1000});
+  };
+  if(!open)return null;
+  return(
+    <Mdl open onClose={onClose} title="Создать опрос">
+      <label className="label">Вопрос</label>
+      <input className="input-field" value={question} onChange={e=>setQuestion(e.target.value)} placeholder="Ваш вопрос" style={{marginBottom:14}}/>
+      <label className="label">Варианты</label>
+      {options.map((o,i)=>(
+        <div key={i} style={{display:'flex',gap:8,marginBottom:8}}>
+          <input className="input-field" value={o} onChange={e=>updateOption(i,e.target.value)} placeholder={`Вариант ${i+1}`}/>
+          {options.length>2&&<button className="ibtn" onClick={()=>removeOption(i)} style={{color:'var(--danger)'}}><Icon name="close" size={18}/></button>}
+        </div>
+      ))}
+      <button className="btn btn-secondary btn-full" onClick={addOption} style={{marginBottom:14}}>+ Добавить вариант</button>
+      <button className="btn btn-primary btn-full" onClick={submit}>Отправить</button>
+    </Mdl>
+  );
+}
+
+/* ===== STICKER PICKER ===== */
+function StickerPickerModal({open,onClose,user,onPick}){
+  const [packs,setPacks]=useState({});
+  const [activePack,setActivePack]=useState(null);
+  useEffect(()=>{
+    if(!open)return;
+    const r=db.ref(`users/${user.uid}/stickerPacks`);
+    const h=r.on('value',s=>{const v=s.val()||{};setPacks(v);const ids=Object.keys(v);if(ids.length&&!activePack)setActivePack(ids[0]);});
+    return()=>r.off('value',h);
+  },[open,user.uid]);
+  const ids=Object.keys(packs);
+  if(!open)return null;
+  return(
+    <Mdl open={open} onClose={onClose} title="Стикеры" maxWidth={520}>
+      {ids.length===0?(
+        <div style={{textAlign:'center',padding:30,color:'var(--t-faint)'}}>Нет стикер-паков. Создайте их в разделе «Стикеры».</div>
+      ):(
+        <>
+          <div style={{display:'flex',gap:6,overflowX:'auto',marginBottom:14,paddingBottom:4}}>
+            {ids.map(id=>(<button key={id} className={`tab ${activePack===id?'on':''}`} onClick={()=>setActivePack(id)} style={{flex:'0 0 auto'}}>{packs[id].name||'Пак'}</button>))}
+          </div>
+          {activePack&&packs[activePack]&&(
+            <div className="pack-grid">
+              {Object.entries(packs[activePack].stickers||{}).map(([k,url])=>(<img key={k} src={url} className="sticker" alt="" onClick={()=>{onPick(url,packs[activePack]);onClose();}}/>))}
+              {!Object.keys(packs[activePack].stickers||{}).length&&<div style={{gridColumn:'1/-1',textAlign:'center',padding:20,color:'var(--t-faint)'}}>Пак пуст</div>}
+            </div>
+          )}
+        </>
+      )}
+    </Mdl>
+  );
+}
+
+/* ===== CHAT VIEW ===== */
+function ChatView({chat,user,profile,friends,online,onBack,onOpenProfile,onOpenGroupSettings,onOpenChannelSettings,onOpenChannelProfile,onOpenImage,blockedUids}){
+  const confirm=useConfirm();
+  const [input,setInput]=useState('');
+  const [replyTo,setReplyTo]=useState(null);
+  const [showAttach,setShowAttach]=useState(false);
+  const [editing,setEditing]=useState(null);
+  const [voiceRecording,setVoiceRecording]=useState(false);
+  const [ctxMenu,setCtxMenu]=useState(null);
+  const [reactionPicker,setReactionPicker]=useState(null);
+  const [muteChat,setMuteChat]=useState(false);
+  const [modal,setModal]=useState(null);
+  const [stickerView,setStickerView]=useState(null);
+  const endRef=useRef(null);
+
+  // === ЗАЩИЩЁННЫЙ DESIGN: все поля имеют дефолты, не бывает undefined ===
+  const design=useMemo(()=>{
+    const d=getDesign(profile)||{};
+    return{
+      messageStyle:d.messageStyle||'classic',
+      messageRadius:d.messageRadius!=null?d.messageRadius:16,
+      messageOpacity:d.messageOpacity!=null?d.messageOpacity:100,
+      fontSize:d.fontSize!=null?d.fontSize:14.5,
+      lineHeight:d.lineHeight!=null?d.lineHeight:145,
+      bubbleTail:d.bubbleTail!==false,
+      compactMode:d.compactMode===true,
+      showAvatars:d.showAvatars!==false,
+      animateMessages:d.animateMessages!==false,
+      messageShadow:d.messageShadow!==false,
+      largeEmoji:d.largeEmoji!==false,
+      timestamps:d.timestamps!==false,
+      readReceipts:d.readReceipts!==false,
+      linkPreview:d.linkPreview!==false,
+      typingIndicator:d.typingIndicator!==false,
+      autoNightMode:d.autoNightMode!==false,
+      reactionsStyle:d.reactionsStyle||'emoji',
+      voiceWave:d.voiceWave||'classic',
+      bubbleBorder:d.bubbleBorder===true,
+      soundOn:d.soundOn===true,
+      forwardHideAuthor:d.forwardHideAuthor===true,
+      chatBackground:d.chatBackground||DEFAULT_BG
+    };
+  },[profile]);
+
+  const isGroup=chat.type==='group';
+  const isChannel=chat.type==='channel';
+  const cid=isGroup||isChannel?chat.id:u.chatId(user.uid,chat.id);
+  const {msgs,loading}=useMessages(cid,isGroup||isChannel);
+  const [grp,setGrp]=useState(null);
+
+  useEffect(()=>{
+    if(!isGroup&&!isChannel)return;
+    const r=db.ref(`groups/${chat.id}`);
+    const h=r.on('value',s=>setGrp(s.val()));
+    return()=>r.off('value',h);
+  },[isGroup,isChannel,chat.id]);
+
+  useEffect(()=>{endRef.current?.scrollIntoView({behavior:'smooth'});},[msgs.length]);
+
+  const prevCount=useRef(0);
+  useEffect(()=>{
+    if(design.soundOn&&msgs.length>prevCount.current&&prevCount.current>0){
+      const last=msgs[msgs.length-1];
+      if(last&&last.uid!==user.uid)u.beep();
+    }
+    prevCount.current=msgs.length;
+  },[msgs.length,design.soundOn,user.uid]);
+
+  const svc=isGroup||isChannel?grpMsgSvc:msgSvc;
+  const isBlocked=!isGroup&&!isChannel&&blockedUids?.includes(chat.id);
+  const canPost=!isChannel||isAdminOf(grp,user.uid);
+  const visibleMsgs=useMemo(()=>{
+    if(isGroup||isChannel)return msgs;
+    if(!isBlocked)return msgs;
+    return msgs.filter(m=>m.uid!==chat.id);
+  },[msgs,isBlocked,isGroup,isChannel,chat.id]);
+
+  const handleSend=()=>{
+    if(!input.trim())return;
+    if(isBlocked)return u.toast('Заблокирован');
+    if(isChannel&&!canPost)return u.toast('Только админы');
+    if(editing){svc.edit(cid,editing.id,input.trim());setEditing(null);setInput('');return;}
+    svc.send(cid,{uid:user.uid,sender:profile.username,avatar:profile.avatar,content:input.trim(),type:'text',timestamp:Date.now(),replyTo:replyTo?{id:replyTo.id,sender:replyTo.sender,content:replyTo.content}:null});
+    setInput('');setReplyTo(null);
+  };
+
+  const handleFile=(e,type)=>{
+    const f=e.target.files?.[0];if(!f)return;
+    const err=u.validateFile(f);if(err)return u.toast(err);
+    const r=new FileReader();
+    r.onloadend=()=>{svc.send(cid,{uid:user.uid,sender:profile.username,avatar:profile.avatar,content:r.result,type,fileName:f.name,timestamp:Date.now()});};
+    r.readAsDataURL(f);e.target.value='';setShowAttach(false);
+  };
+
+  const sendVoice=(dataUrl,duration,size)=>{
+    svc.send(cid,{uid:user.uid,sender:profile.username,avatar:profile.avatar,content:dataUrl,type:'voice',voiceDuration:duration,fileSize:size,timestamp:Date.now()});
+    setVoiceRecording(false);
+  };
+
+  const handleDelete=async m=>{
+    const ok=await confirm({title:'Удалить?',danger:true,confirmText:'Да'});
+    if(ok)svc.del(cid,m.id);
+  };
+
+  const handleReact=(m,emoji)=>{
+    if(m.type==='poll'&&typeof emoji==='string'&&emoji.startsWith('vote:')){
+      const idx=parseInt(emoji.slice(5));
+      svc.vote(cid,m.id,user.uid,idx);
+      return;
+    }
+    const cur=m.reactions?.[user.uid];
+    if(cur===emoji)svc.unreact(cid,m.id,user.uid);
+    else if(emoji)svc.react(cid,m.id,user.uid,emoji);
+  };
+
+  const openCtx=(e,msg)=>{
+    const items=[];
+    if(msg.type==='text'||msg.type==='image'||msg.type==='audio'||msg.type==='voice'){
+      items.push({icon:'reply',label:'Ответить',action:()=>setReplyTo(msg)});
+    }
+    items.push({icon:'favorite',label:'Реакция',action:()=>setReactionPicker({x:e.clientX,y:e.clientY,msg})});
+    if(msg.type==='sticker'&&msg.stickerPack){
+      items.push({icon:'info',label:'О стикере',action:()=>setStickerView({sticker:msg.content,pack:msg.stickerPack})});
+    }
+    if(msg.uid===user.uid){
+      if(msg.type==='text')items.push({icon:'edit',label:'Изменить',action:()=>{setEditing(msg);setInput(msg.content);}});
+      items.push({icon:'delete',label:'Удалить',action:()=>handleDelete(msg),danger:true});
+    }
+    setCtxMenu({x:e.clientX,y:e.clientY,items});
+  };
+
+  const canManageGroup=isGroup&&grp&&isAdminOf(grp,user.uid);
+  const canManageChannel=isChannel&&grp&&isAdminOf(grp,user.uid);
+  const liveAvatar=isGroup||isChannel?grp?.avatar:chat.avatar;
+  const liveName=isGroup||isChannel?grp?.name:chat.name;
+
+  let subtitle;
+  if(isChannel)subtitle=grp?`${Object.keys(grp.members||{}).length} подписчиков`:'Канал';
+  else if(isGroup)subtitle=grp?`${Object.keys(grp.members||{}).length} участников`:'Группа';
+  else if(isBlocked)subtitle='Заблокирован';
+  else if(online[chat.uid])subtitle=<span style={{color:'var(--success)'}}>В сети</span>;
+  else subtitle='был(а) давно';
+
+  const chatBg=design.chatBackground;
+  const messagesClasses=`messages scroll-area${design.compactMode?' compact':''}${!design.animateMessages?' no-anim':''}`;
+
+  return(
+    <>
+      {voiceRecording&&<VoiceRecorder onCancel={()=>setVoiceRecording(false)} onSend={sendVoice}/>}
+
+      <div className="topbar">
+        {window.innerWidth<=768&&<button className="ibtn mobile-back-btn" onClick={onBack}><Icon name="arrow_back"/></button>}
+        {isBlocked?(
+          <div style={{width:40,height:40,borderRadius:'50%',background:'#e53935',color:'#fff',display:'flex',alignItems:'center',justifyContent:'center',fontWeight:700,fontSize:16}}>
+            {(chat.name||'?')[0].toUpperCase()}
+          </div>
+        ):(
+          <AvRound src={liveAvatar} size={40} status={!isGroup&&!isChannel&&online[chat.uid]?'online':null} username={liveName}/>
+        )}
+        <div className="f1" style={{cursor:'pointer',minWidth:0}} onClick={()=>{if(isChannel)onOpenChannelProfile?.();else if(!isGroup)onOpenProfile?.(chat.id);}}>
+          <div style={{fontWeight:600,fontSize:15,display:'flex',alignItems:'center',gap:4}} className="tr">
+            <span className="tr">{liveName}</span>
+            {isChannel&&<span className="channel-icon-badge"><Icon name="campaign" size={11}/></span>}
+            {(isChannel||isGroup)&&grp&&grp.id&&<GroupBadgeIcon gid={grp.id}/>}
+            {!isChannel&&!isGroup&&<Badges uid={chat.id}/>}
+          </div>
+          <div style={{fontSize:12.5,color:'var(--t-lo)'}} className="tr">{subtitle}</div>
+        </div>
+        {isChannel&&(
+          <button className="ibtn" onClick={()=>setMuteChat(!muteChat)} title={muteChat?'Включить звук':'Выключить звук'}>
+            <Icon name={muteChat?'volume_off':'volume_up'} size={22}/>
+          </button>
+        )}
+        {canManageGroup&&<button className="ibtn" onClick={onOpenGroupSettings}><Icon name="settings" size={22}/></button>}
+        {canManageChannel&&<button className="ibtn" onClick={onOpenChannelSettings}><Icon name="settings" size={22}/></button>}
+      </div>
+
+      {loading?(
+        <div className="loading-screen"><div className="spinner"/></div>
+      ):(
+        <div className={messagesClasses} style={{backgroundImage:`url(${chatBg})`,backgroundSize:'cover',backgroundPosition:'center'}}>
+          {!visibleMsgs.length&&(
+            <div className="empty">
+              <Icon name="chat_bubble" size={72}/>
+              <div className="empty-title">{isChannel?'Нет публикаций':'Нет сообщений'}</div>
+            </div>
+          )}
+          {visibleMsgs.map(m=>(
+            <MsgBubble
+              key={m.id}
+              msg={m}
+              isOwn={m.uid===user.uid}
+              showMeta={true}
+              myUid={user.uid}
+              design={design}
+              onReply={setReplyTo}
+              onEdit={x=>{setEditing(x);setInput(x.content);}}
+              onDelete={handleDelete}
+              onReact={handleReact}
+              onOpenProfile={onOpenProfile}
+              onOpenImage={onOpenImage}
+              onContextMenu={openCtx}
+              onOpenReactionPicker={(e,msg)=>setReactionPicker({x:e.clientX,y:e.clientY,msg})}
+              onOpenSticker={(msg)=>setStickerView({sticker:msg.content,pack:msg.stickerPack})}
+            />
+          ))}
+          <div ref={endRef}/>
+        </div>
+      )}
+
+      {replyTo&&(
+        <div style={{padding:'10px 20px',borderTop:'1px solid var(--glass-border)',background:'var(--glass-1)',display:'flex',alignItems:'center',gap:12}}>
+          <div style={{flex:1,borderLeft:'3px solid var(--danger)',paddingLeft:12}}>
+            <div style={{fontSize:11,fontWeight:700,color:'var(--danger)'}}>{design.forwardHideAuthor&&replyTo.forwarded?'Скрыто':replyTo.sender}</div>
+            <div style={{fontSize:12.5,color:'var(--t-lo)'}} className="tr">{replyTo.content}</div>
+          </div>
+          <button className="ibtn" onClick={()=>setReplyTo(null)}><Icon name="close" size={18}/></button>
+        </div>
+      )}
+
+      {!isBlocked&&(!isChannel||canPost)&&(
+        <div className="input-bar">
+          {showAttach&&(
+            <div style={{position:'absolute',bottom:'100%',left:20,background:'var(--glass-2)',backdropFilter:'blur(40px)',border:'1px solid var(--glass-border-strong)',borderRadius:'var(--r-lg)',padding:6,display:'flex',flexDirection:'column',gap:2,boxShadow:'var(--sh-lg)',zIndex:10,minWidth:220}}>
+              <label className="list-item" style={{cursor:'pointer',padding:'10px 14px',fontSize:14}}>
+                <Icon name="image" size={18}/> Фото
+                <input type="file" accept="image/*" hidden onChange={e=>handleFile(e,'image')}/>
+              </label>
+              <label className="list-item" style={{cursor:'pointer',padding:'10px 14px',fontSize:14}}>
+                <Icon name="music_note" size={18}/> Аудио
+                <input type="file" accept="audio/*" hidden onChange={e=>handleFile(e,'audio')}/>
+              </label>
+              <button className="list-item" style={{padding:'10px 14px',fontSize:14}} onClick={()=>{setShowAttach(false);setModal('stickers');}}>
+                <Icon name="sticky_note_2" size={18}/> Стикеры
+              </button>
+              <button className="list-item" style={{padding:'10px 14px',fontSize:14}} onClick={()=>{setShowAttach(false);setModal('createPoll');}}>
+                <Icon name="poll" size={18}/> Опрос
+              </button>
+            </div>
+          )}
+          <button className="ibtn" onClick={()=>setShowAttach(!showAttach)}><Icon name="add"/></button>
+          <div className="input-wrap">
+            <textarea
+              className="msg-input"
+              placeholder={isChannel?'Опубликовать...':'Сообщение'}
+              value={input}
+              onChange={e=>setInput(e.target.value)}
+              onKeyDown={e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();handleSend();}}}
+              rows={1}
+            />
+          </div>
+          {input.trim()?(
+            <button className="send-btn" onClick={handleSend}><Icon name={editing?'check':'send'} size={22}/></button>
+          ):(
+            <button className="send-btn secondary" onClick={()=>setVoiceRecording(true)}><Icon name="mic" size={22}/></button>
+          )}
+        </div>
+      )}
+
+      {isBlocked&&(
+        <div style={{padding:'12px 20px',borderTop:'1px solid var(--glass-border)',background:'var(--glass-1)',textAlign:'center',fontSize:13,color:'var(--danger)'}}>
+          Пользователь заблокирован
+        </div>
+      )}
+      {isChannel&&!canPost&&!isBlocked&&(
+        <div style={{padding:'12px 20px',borderTop:'1px solid var(--glass-border)',background:'var(--glass-1)',textAlign:'center',fontSize:13,color:'var(--t-lo)'}}>
+          Только администраторы могут публиковать
+        </div>
+      )}
+
+      {ctxMenu&&<ContextMenu x={ctxMenu.x} y={ctxMenu.y} items={ctxMenu.items} onClose={()=>setCtxMenu(null)}/>}
+      {reactionPicker&&(
+        <ReactionPicker
+          x={reactionPicker.x}
+          y={reactionPicker.y}
+          onPick={emoji=>{handleReact(reactionPicker.msg,emoji);setReactionPicker(null);}}
+          onClose={()=>setReactionPicker(null)}
+        />
+      )}
+
+      {modal==='createPoll'&&(
+        <CreatePollModal
+          open
+          onClose={()=>setModal(null)}
+          onSend={poll=>{
+            const baseMsg={uid:user.uid,sender:profile.username,avatar:profile.avatar,content:poll.question,type:'poll',timestamp:Date.now()};
+            if(isGroup||isChannel){
+              svc.send(cid,{...baseMsg,poll,options:poll.options,votes:{},endsAt:poll.endsAt});
+            }else{
+              svc.send(cid,{...baseMsg,poll});
+            }
+            setModal(null);
+          }}
+        />
+      )}
+
+      <StickerPickerModal
+        open={modal==='stickers'}
+        onClose={()=>setModal(null)}
+        user={user}
+        onPick={(url,pack)=>{
+          svc.send(cid,{uid:user.uid,sender:profile.username,avatar:profile.avatar,content:url,type:'sticker',timestamp:Date.now(),stickerPack:{id:pack.id,name:pack.name,author:profile.username,authorUid:user.uid}});
+          setModal(null);
+        }}
+      />
+
+      <StickerViewer
+        sticker={stickerView?.sticker}
+        pack={stickerView?.pack}
+        onClose={()=>setStickerView(null)}
+        user={user}
+        profile={profile}
+      />
+    </>
+  );
+}
+
+/* ===== ADMIN PANEL ===== */
+function AdminPanelModal({open,onClose,user,profile}){
+  const confirm=useConfirm();
+  const [tab,setTab]=useState('users');
+  const [search,setSearch]=useState('');
+  const [users,setUsers]=useState([]);
+  const [badgeNick,setBadgeNick]=useState('');
+  const [selectedBadge,setSelectedBadge]=useState('Dev');
+  const [targetGroup,setTargetGroup]=useState('');
+  const [banDuration,setBanDuration]=useState('7d');
+  const [freezeReason,setFreezeReason]=useState('');
+  const [freezeGiveScam,setFreezeGiveScam]=useState(false);
+  useEffect(()=>{if(!open)return;db.ref('users').once('value').then(s=>setUsers(Object.entries(s.val()||{}).map(([id,x])=>({id,...x}))));},[open]);
+  const giveBadge=async()=>{if(!badgeNick.trim())return u.toast('Ник');const t=users.find(x=>x.username===badgeNick||x.user===badgeNick.toLowerCase());if(!t)return u.toast('Не найден');const b={...(t.badges||{}),[selectedBadge]:true};await db.ref(`users/${t.id}/badges`).set(b);bc.delete(t.id);u.toast('Выдан');setBadgeNick('');};
+  const removeBadge=async()=>{if(!badgeNick.trim())return;const t=users.find(x=>x.username===badgeNick||x.user===badgeNick.toLowerCase());if(!t)return;const b={...(t.badges||{})};delete b[selectedBadge];await db.ref(`users/${t.id}/badges`).set(b);bc.delete(t.id);u.toast('Снят');setBadgeNick('');};
+  const giveGroupBadge=async()=>{if(!targetGroup.trim())return u.toast('Введите ключ');const g=await grpSvc.findByJoinKey(targetGroup.trim());if(!g)return u.toast('Группа/канал не найден');await badgeSvc.giveToGroup(g.id,selectedBadge);groupBadgeCache.delete(g.id);u.toast(`Значок ${selectedBadge} выдан «${g.name}»`);setTargetGroup('');};
+  const removeGroupBadge=async()=>{if(!targetGroup.trim())return u.toast('Введите ключ');const g=await grpSvc.findByJoinKey(targetGroup.trim());if(!g)return u.toast('Группа/канал не найден');await badgeSvc.removeFromGroup(g.id);groupBadgeCache.delete(g.id);u.toast(`Значок снят с «${g.name}»`);setTargetGroup('');};
+  const freezeUser=async t=>{
+    if(!freezeReason.trim())return u.toast('Укажите причину');
+    const ok=await confirm({title:'Заморозить?',danger:true,confirmText:'Да'});
+    if(!ok)return;
+    const orig={username:t.username,avatar:t.avatar};
+    const badges={...(t.badges||{})};
+    if(freezeGiveScam)badges.SCAM=true;
+    await db.ref(`users/${t.id}`).update({frozen:true,frozenUntil:Date.now()+(7*24*60*60*1000),freezeReason:freezeReason.trim(),frozenOriginal:orig,badges});
+    setUsers(p=>p.map(x=>x.id===t.id?{...x,frozen:true}:x));
+    u.toast('Заморожен на 7 дней');setFreezeReason('');setFreezeGiveScam(false);
+  };
+  const unfreezeUser=async t=>{const ok=await confirm({title:'Разморозить?',confirmText:'Да'});if(!ok)return;const orig=t.frozenOriginal||{};await db.ref(`users/${t.id}`).update({frozen:false,frozenUntil:null,freezeReason:null,username:orig.username||t.username,avatar:orig.avatar||t.avatar,frozenOriginal:null});setUsers(p=>p.map(x=>x.id===t.id?{...x,frozen:false}:x));u.toast('Разморожен');};
+  const banUser=async t=>{const ok=await confirm({title:'Забанить?',danger:true,confirmText:'Да'});if(!ok)return;await db.ref(`users/${t.id}`).update({banned:true,banDuration,bannedAt:Date.now()});setUsers(p=>p.map(x=>x.id===t.id?{...x,banned:true}:x));u.toast('Забанен');};
+  const unbanUser=async t=>{await db.ref(`users/${t.id}`).update({banned:false,banDuration:null});setUsers(p=>p.map(x=>x.id===t.id?{...x,banned:false}:x));u.toast('Разбанен');};
+  const filtered=users.filter(x=>{const q=search.toLowerCase();return!q||(x.username?.toLowerCase().includes(q)||x.user?.toLowerCase().includes(q))});
+  return(
+    <Mdl open={open} onClose={onClose} title="Админ-панель" maxWidth={700}>
+      <div className="tabs" style={{marginBottom:20}}>
+        <button className={`tab ${tab==='users'?'on':''}`} onClick={()=>setTab('users')}>Пользователи</button>
+        <button className={`tab ${tab==='badges'?'on':''}`} onClick={()=>setTab('badges')}>Значки юзерам</button>
+        <button className={`tab ${tab==='groupbadges'?'on':''}`} onClick={()=>setTab('groupbadges')}>Значки группам</button>
+      </div>
+      {tab==='users'&&(<>
+        <input className="input-field" placeholder="Поиск" value={search} onChange={e=>setSearch(e.target.value)} style={{marginBottom:14}}/>
+        <select className="input-field" value={banDuration} onChange={e=>setBanDuration(e.target.value)} style={{marginBottom:14}}>
+          <option value="1h">1 час</option><option value="1d">1 день</option><option value="7d">7 дней</option><option value="30d">30 дней</option><option value="permanent">Навсегда</option>
+        </select>
+        <div style={{maxHeight:420,overflowY:'auto'}} className="scroll-area">
+          {filtered.slice(0,100).map(x=>(<div key={x.id} style={{display:'flex',alignItems:'center',gap:10,padding:10,background:'var(--bg-elev-1)',borderRadius:'var(--r-md)',marginBottom:6}}>
+            <AvRound src={x.avatar} size={36} username={x.username}/>
+            <div className="f1"><div style={{fontSize:13.5,fontWeight:600}}>{x.frozen?'❄️ '+x.username:x.username}</div><div style={{fontSize:11.5,color:'var(--t-faint)'}}>@{x.user}</div></div>
+            {x.frozen?<button className="btn btn-success btn-xs" onClick={()=>unfreezeUser(x)}>Разморозить</button>:<>{x.banned?<button className="btn btn-success btn-xs" onClick={()=>unbanUser(x)}>Разбан</button>:<button className="btn btn-danger btn-xs" onClick={()=>banUser(x)}>Бан</button>}</>}
+          </div>))}
+        </div>
+        <div style={{marginTop:16,padding:14,background:'var(--bg-elev-1)',borderRadius:'var(--r-lg)'}}>
+          <div className="section-title" style={{padding:'0 0 10px'}}>Заморозка пользователя</div>
+          <input className="input-field" placeholder="Ник для заморозки" value={badgeNick} onChange={e=>setBadgeNick(e.target.value)} style={{marginBottom:10}}/>
+          <input className="input-field" placeholder="Причина заморозки" value={freezeReason} onChange={e=>setFreezeReason(e.target.value)} style={{marginBottom:10}}/>
+          <div className="settings-row" style={{padding:'8px 0'}}>
+            <span className="settings-label">Выдать значок SCAM</span>
+            <button className={`toggle ${freezeGiveScam?'on':''}`} onClick={()=>setFreezeGiveScam(!freezeGiveScam)}/>
+          </div>
+          <button className="btn btn-danger btn-full" style={{marginTop:8}} onClick={async()=>{const t=users.find(x=>x.username===badgeNick||x.user===badgeNick.toLowerCase());if(!t)return u.toast('Не найден');await freezeUser(t);}}>Заморозить на 7 дней</button>
+        </div>
+      </>)}
+      {tab==='badges'&&(<>
+        <div style={{display:'flex',gap:8,marginBottom:16,flexWrap:'wrap'}}>
+          {['Dev','Verified','Bot','Youtuber','SCAM'].map(b=>(<button key={b} className={`btn ${selectedBadge===b?'btn-primary':'btn-secondary'} btn-sm`} onClick={()=>setSelectedBadge(b)}>{b}</button>))}
+        </div>
+        <input className="input-field" placeholder="Юзер" value={badgeNick} onChange={e=>setBadgeNick(e.target.value)} style={{marginBottom:14}}/>
+        <div className="flex g2">
+          <button className="btn btn-success f1" onClick={giveBadge}>Выдать</button>
+          <button className="btn btn-danger f1" onClick={removeBadge}>Снять</button>
+        </div>
+      </>)}
+      {tab==='groupbadges'&&(<>
+        <div style={{fontSize:12.5,color:'var(--t-lo)',marginBottom:14}}>Значок вешается на саму группу/канал и отображается у названия.</div>
+        <div style={{display:'flex',gap:8,marginBottom:16,flexWrap:'wrap'}}>
+          {['Dev','Verified','Bot','Youtuber','SCAM'].map(b=>(<button key={b} className={`btn ${selectedBadge===b?'btn-primary':'btn-secondary'} btn-sm`} onClick={()=>setSelectedBadge(b)}>{b}</button>))}
+        </div>
+        <label className="label">Ключ группы/канала</label>
+        <input className="input-field" placeholder="20-символьный ключ" value={targetGroup} onChange={e=>setTargetGroup(e.target.value)} style={{marginBottom:14,fontFamily:'monospace'}}/>
+        <div className="flex g2">
+          <button className="btn btn-primary f1" onClick={giveGroupBadge}>Выдать значок</button>
+          <button className="btn btn-danger f1" onClick={removeGroupBadge}>Снять значок</button>
+        </div>
+      </>)}
+    </Mdl>
+  );
+}
+
+/* ===== STICKER PACKS ===== */
+function StickerPacksModal({open,onClose,user}){
+  const [packs,setPacks]=useState({});
+  const [newName,setNewName]=useState('');
+  useEffect(()=>{if(!open)return;const r=db.ref(`users/${user.uid}/stickerPacks`);const h=r.on('value',s=>setPacks(s.val()||{}));return()=>r.off('value',h);},[open,user]);
+  const createPack=async()=>{if(!newName.trim())return;const id=`pack_${Date.now().toString(36)}`;await stickerSvc.create(user.uid,{id,name:newName.trim(),stickers:{},author:user?.displayName||user?.email?.split('@')[0]||'User',authorUid:user.uid,createdAt:Date.now()});u.toast('Создан');setNewName('');};
+  const addSticker=(e,pid)=>{const files=e.target.files;if(!files)return;Array.from(files).forEach(f=>{const r=new FileReader();r.onloadend=()=>stickerSvc.addSticker(user.uid,pid,r.result);r.readAsDataURL(f);});u.toast('Добавлено');};
+  return(
+    <Mdl open={open} onClose={onClose} title="Стикеры">
+      <div className="flex g2" style={{marginBottom:14}}>
+        <input className="input-field" placeholder="Новый пак" value={newName} onChange={e=>setNewName(e.target.value)}/>
+        <button className="btn btn-primary" onClick={createPack}>+</button>
+      </div>
+      {Object.values(packs).map(p=>(<div key={p.id} className="pack-card">
+        <div className="pack-header">
+          <div className="pack-title">{p.name}</div>
+          <div className="pack-count">{Object.keys(p.stickers||{}).length} шт.</div>
+        </div>
+        <div className="flex g2" style={{marginBottom:10}}>
+          <label className="btn btn-secondary btn-sm f1" style={{cursor:'pointer'}}>+ Картинки<input type="file" accept="image/*" multiple hidden onChange={e=>addSticker(e,p.id)}/></label>
+          <button className="btn btn-danger btn-sm" onClick={()=>stickerSvc.delete(user.uid,p.id)}>Удалить</button>
+        </div>
+        <div className="pack-grid">
+          {Object.entries(p.stickers||{}).map(([k,url])=>(<img key={k} src={url} className="sticker" alt=""/>))}
+        </div>
+      </div>))}
+    </Mdl>
+  );
+}
+
+/* ===== FRIENDS MODAL ===== */
+function FriendsModal({open,onClose,user,profile,friends,incoming,online,onOpenProfile,onWrite}){
+  const confirm=useConfirm();
+  const [tab,setTab]=useState('friends');
+  const [q,setQ]=useState('');
+  const [found,setFound]=useState(null);
+  const search=async()=>{if(!q.trim())return;const f=await userSvc.findAny(q.trim());if(!f)return u.toast('Не найден');setFound(f);};
+  const send=async()=>{if(!found)return;try{await frSvc.send(user.uid,{username:profile.username,avatar:profile.avatar},found.uid);u.toast('Отправлено');setQ('');setFound(null);}catch(e){u.toast(e.message);}};
+  const delFriend=async f=>{const ok=await confirm({title:'Удалить?',danger:true,confirmText:'Да'});if(!ok)return;await frSvc.remove(user.uid,f.uid);u.toast('Удалён');};
+  const blockFriend=async f=>{const ok=await confirm({title:'Заблокировать?',message:'Сообщения не будут приходить',danger:true,confirmText:'Заблокировать'});if(!ok)return;await frSvc.block(user.uid,f.uid);u.toast('Заблокирован');};
+  return(
+    <Mdl open={open} onClose={onClose} title="Друзья">
+      <div className="tabs" style={{marginBottom:20}}>
+        <button className={`tab ${tab==='friends'?'on':''}`} onClick={()=>setTab('friends')}>Друзья ({friends.length})</button>
+        <button className={`tab ${tab==='add'?'on':''}`} onClick={()=>setTab('add')}>Добавить</button>
+        <button className={`tab ${tab==='req'?'on':''}`} onClick={()=>setTab('req')}>Заявки {incoming.length>0&&`(${incoming.length})`}</button>
+      </div>
+      {tab==='friends'&&(<div style={{maxHeight:400,overflowY:'auto'}} className="scroll-area">
+        {friends.map(f=>(<div key={f.uid} style={{display:'flex',alignItems:'center',gap:12,padding:11,background:'var(--bg-elev-1)',borderRadius:'var(--r-md)',marginBottom:6}}>
+          <AvRound src={f.avatar} size={44} status={online[f.uid]?'online':null} username={f.username} onClick={()=>{onOpenProfile(f.uid);onClose();}}/>
+          <div className="f1" style={{cursor:'pointer'}} onClick={()=>{onOpenProfile(f.uid);onClose();}}>
+            <div style={{fontWeight:600,fontSize:14}}>{f.username}</div>
+            <div style={{fontSize:12,color:online[f.uid]?'var(--success)':'var(--t-faint)'}}>{online[f.uid]?'В сети':'Не в сети'}</div>
+          </div>
+          <button className="ibtn" onClick={()=>{onWrite(f.uid);onClose();}}><Icon name="chat" size={20}/></button>
+          <button className="ibtn" onClick={()=>blockFriend(f)} style={{color:'var(--danger)'}}><Icon name="block" size={20}/></button>
+          <button className="ibtn" onClick={()=>delFriend(f)} style={{color:'var(--danger)'}}><Icon name="person_remove" size={20}/></button>
+        </div>))}
+      </div>)}
+      {tab==='add'&&(<>
+        <div className="flex g2">
+          <input className="input-field" placeholder="Юзер или ник" value={q} onChange={e=>setQ(e.target.value)}/>
+          <button className="btn btn-primary" onClick={search}>Найти</button>
+        </div>
+        {found&&(<div style={{display:'flex',alignItems:'center',gap:12,padding:11,background:'var(--bg-elev-1)',borderRadius:'var(--r-md)',marginTop:14}}>
+          <AvRound src={found.avatar} size={44} username={found.username}/>
+          <div className="f1"><div style={{fontWeight:600}}>{found.username}</div></div>
+          <button className="btn btn-primary btn-sm" onClick={send}>Отправить</button>
+        </div>)}
+      </>)}
+      {tab==='req'&&incoming.map(r=>(<div key={r.uid} style={{display:'flex',alignItems:'center',gap:12,padding:11,background:'var(--bg-elev-1)',borderRadius:'var(--r-md)',marginBottom:8}}>
+        <AvRound src={r.avatar} size={44} username={r.username}/>
+        <div className="f1"><div style={{fontWeight:600}}>{r.username}</div></div>
+        <button className="btn btn-success btn-sm" onClick={async()=>{await frSvc.accept(user.uid,r.uid,r);u.toast('Принято');}}>✓</button>
+        <button className="btn btn-danger btn-sm" onClick={async()=>{await frSvc.reject(user.uid,r.uid);}}>✕</button>
+      </div>))}
+    </Mdl>
+  );
+}
+
+/* ===== CHAT ITEM / CHAT LIST ===== */
+const ChatItem=memo(({chat,on,onClick,online})=>{
+  const isGroup=chat.type==='group';
+  const isChannel=chat.type==='channel';
+  return(
+    <div className={`chat-item ${on?'active':''}`} onClick={onClick}>
+      <AvRound src={chat.avatar} size={48} status={!isGroup&&!isChannel&&online?'online':null} username={chat.name}/>
+      <div className="chat-item-body">
+        <div className="chat-item-name">
+          <span className="tr">{chat.name}</span>
+          {isChannel&&<span className="channel-icon-badge"><Icon name="campaign" size={10}/></span>}
+          {(isChannel||isGroup)&&chat.id&&<GroupBadgeIcon gid={chat.id}/>}
+          {!isChannel&&!isGroup&&chat.id&&<Badges uid={chat.id}/>}
+        </div>
+        <div className="chat-item-preview"><span className="tr">{isGroup?'Группа':(isChannel?'Канал':'Чат')}</span></div>
+      </div>
+    </div>
+  );
+});
+function ChatList({user,profile,friends,online,groups,activeChat,onSelect,onCreateGroup,onOpenFriends,onJoinGroup,onOpenStore,onOpenSettings,onOpenAdmin,onOpenStickers,reqCount}){
+  const [search,setSearch]=useState('');
+  const all=useMemo(()=>{
+    const channels=groups.filter(g=>g.isChannel).map(g=>({id:g.id,type:'channel',name:g.name,avatar:g.avatar,uid:g.id}));
+    const grps=groups.filter(g=>!g.isChannel).map(g=>({id:g.id,type:'group',name:g.name,avatar:g.avatar,uid:g.id}));
+    return[...channels,...grps,...friends.map(f=>({id:f.uid,type:'direct',name:f.username,avatar:f.avatar,uid:f.uid}))];
+  },[friends,groups]);
+  const filtered=useMemo(()=>{if(!search.trim())return all;const q=search.toLowerCase();return all.filter(c=>c.name.toLowerCase().includes(q));},[all,search]);
+  const isAdmin=userSvc.isAdmin(profile);
+  return(
+    <>
+      <div className="sidebar-header">
+        <div className="sidebar-logo">NEXIC</div>
+        <div style={{flex:1}}/>
+        <div className="diamond-badge"><Diamond/>{profile?.gems||0}</div>
+      </div>
+      <div className="search-wrap">
+        <div className="search-box">
+          <Icon name="search" size={18} style={{color:'var(--t-faint)'}}/>
+          <input placeholder="Поиск" value={search} onChange={e=>setSearch(e.target.value)}/>
+        </div>
+      </div>
+      <div className="chat-list scroll-area">
+        {filtered.map(c=>(<ChatItem key={c.id} chat={c} on={activeChat===c.id} online={online[c.uid]} onClick={()=>onSelect(c)}/>))}
+      </div>
+      <div className="dock">
+        <button className="dock-btn" onClick={onOpenFriends}><Icon name="group"/>{reqCount>0&&<span className="badge">{reqCount}</span>}</button>
+        <button className="dock-btn" onClick={onCreateGroup}><Icon name="add_box"/></button>
+        <button className="dock-btn" onClick={onJoinGroup}><Icon name="login"/></button>
+        <button className="dock-btn" onClick={onOpenStickers}><Icon name="emoji_emotions"/></button>
+        <button className="dock-btn" onClick={onOpenStore}><Icon name="storefront"/></button>
+        <button className="dock-btn" onClick={onOpenSettings}><Icon name="settings"/></button>
+        {isAdmin&&<button className="dock-btn" onClick={onOpenAdmin}><Icon name="admin_panel_settings"/></button>}
+      </div>
+    </>
+  );
+}
+
+/* ===== BG EDITOR ===== */
+function BgEditor({open,onClose,onSave}){
+  const canvasRef=useRef(null);
+  const [size,setSize]=useState({w:800,h:600});
+  const [tool,setTool]=useState('brush');
+  const [color,setColor]=useState('#ffffff');
+  const [brushSize,setBrushSize]=useState(8);
+  const [drawing,setDrawing]=useState(false);
+  const [history,setHistory]=useState([]);
+  const lastPos=useRef(null);
+  useEffect(()=>{
+    if(!open||!canvasRef.current)return;
+    const c=canvasRef.current;
+    c.width=size.w;c.height=size.h;
+    const ctx=c.getContext('2d');
+    ctx.globalCompositeOperation='source-over';
+    ctx.fillStyle='#0a0a0a';
+    ctx.fillRect(0,0,size.w,size.h);
+    setHistory([]);
+  },[open,size.w,size.h]);
+  const getPos=(e)=>{const c=canvasRef.current;const r=c.getBoundingClientRect();const clientX=e.clientX??e.touches?.[0]?.clientX??0;const clientY=e.clientY??e.touches?.[0]?.clientY??0;const x=(clientX-r.left)*(c.width/r.width);const y=(clientY-r.top)*(c.height/r.height);return{x,y};};
+  const pushHistory=()=>{const c=canvasRef.current;try{setHistory(h=>[...h.slice(-19),c.toDataURL()]);}catch{}};
+  const startDraw=e=>{e.preventDefault();setDrawing(true);pushHistory();lastPos.current=getPos(e);};
+  const draw=e=>{if(!drawing)return;e.preventDefault();const c=canvasRef.current,ctx=c.getContext('2d');const pos=getPos(e);ctx.lineWidth=brushSize;ctx.lineCap='round';ctx.lineJoin='round';if(tool==='eraser'){ctx.globalCompositeOperation='destination-out';ctx.strokeStyle='rgba(0,0,0,1)';}else{ctx.globalCompositeOperation='source-over';ctx.strokeStyle=color;}ctx.beginPath();ctx.moveTo(lastPos.current.x,lastPos.current.y);ctx.lineTo(pos.x,pos.y);ctx.stroke();lastPos.current=pos;};
+  const endDraw=()=>{setDrawing(false);lastPos.current=null;};
+  const undo=()=>{if(!history.length)return;const last=history[history.length-1];setHistory(h=>h.slice(0,-1));const img=new Image();img.onload=()=>{const c=canvasRef.current;const ctx=c.getContext('2d');ctx.globalCompositeOperation='source-over';ctx.clearRect(0,0,c.width,c.height);ctx.drawImage(img,0,0);};img.src=last;};
+  const clear=()=>{pushHistory();const c=canvasRef.current;const ctx=c.getContext('2d');ctx.globalCompositeOperation='source-over';ctx.fillStyle='#0a0a0a';ctx.fillRect(0,0,c.width,c.height);};
+  const fill=()=>{pushHistory();const c=canvasRef.current;const ctx=c.getContext('2d');ctx.globalCompositeOperation='source-over';ctx.fillStyle=color;ctx.fillRect(0,0,c.width,c.height);};
+  const save=()=>{const c=canvasRef.current;const dataUrl=c.toDataURL('image/png');onSave(dataUrl);onClose();};
+  const PALETTE=['#ffffff','#000000','#ff453a','#ffd60a','#4ade80','#64d2ff','#a855f7','#f472b6','#fb923c','#94a3b8'];
+  if(!open)return null;
+  return(
+    <div className="modal-overlay" style={{zIndex:4000}} onClick={e=>e.target===e.currentTarget&&onClose()}>
+      <div className="modal" style={{maxWidth:900,width:'100%'}} onClick={e=>e.stopPropagation()}>
+        <div className="modal-header">
+          <h2 className="modal-title">Редактор фона</h2>
+          <button className="ibtn" onClick={onClose}><Icon name="close"/></button>
+        </div>
+        <div className="modal-body" style={{display:'flex',flexDirection:'column',gap:14}}>
+          <div style={{display:'flex',gap:10,alignItems:'center',flexWrap:'wrap'}}>
+            <span style={{fontSize:12,color:'var(--t-lo)',fontWeight:600}}>Размер:</span>
+            {[[600,400],[800,600],[1200,800]].map(([w,h])=>(<button key={w} className={`tab ${size.w===w&&size.h===h?'on':''}`} onClick={()=>setSize({w,h})}>{w}×{h}</button>))}
+          </div>
+          <div style={{display:'flex',gap:8,flexWrap:'wrap',alignItems:'center'}}>
+            <button className={`tab ${tool==='brush'?'on':''}`} onClick={()=>setTool('brush')} style={{display:'flex',alignItems:'center',gap:6}}><Icon name="brush" size={18}/> Кисть</button>
+            <button className={`tab ${tool==='eraser'?'on':''}`} onClick={()=>setTool('eraser')} style={{display:'flex',alignItems:'center',gap:6}}><Icon name="ink_eraser" size={18}/> Ластик</button>
+            <button className="tab" onClick={undo}><Icon name="undo" size={18}/> Отменить</button>
+            <button className="tab" onClick={clear}><Icon name="cleaning_services" size={18}/> Очистить</button>
+            <button className="tab" onClick={fill}><Icon name="format_color_fill" size={18}/> Залить</button>
+          </div>
+          <div style={{display:'flex',gap:14,alignItems:'center',flexWrap:'wrap'}}>
+            <div style={{display:'flex',gap:6,alignItems:'center'}}>
+              <span style={{fontSize:12,color:'var(--t-lo)',fontWeight:600}}>Цвет:</span>
+              <input type="color" value={color} onChange={e=>setColor(e.target.value)} style={{width:40,height:32,border:'none',borderRadius:6,cursor:'pointer',background:'transparent'}}/>
+              {PALETTE.map(c=>(<button key={c} onClick={()=>setColor(c)} style={{width:24,height:24,borderRadius:'50%',background:c,border:color===c?'2px solid var(--accent)':'1px solid var(--glass-border)',cursor:'pointer'}}/>))}
+            </div>
+            <div style={{display:'flex',gap:8,alignItems:'center',flex:1,minWidth:200}}>
+              <span style={{fontSize:12,color:'var(--t-lo)',fontWeight:600,whiteSpace:'nowrap'}}>Размер: {brushSize}px</span>
+              <input type="range" min={1} max={60} value={brushSize} onChange={e=>setBrushSize(+e.target.value)}/>
+            </div>
+          </div>
+          <div style={{background:'#111',borderRadius:12,padding:10,display:'flex',justifyContent:'center',overflow:'auto'}}>
+            <canvas ref={canvasRef}
+              onMouseDown={startDraw} onMouseMove={draw} onMouseUp={endDraw} onMouseLeave={endDraw}
+              onTouchStart={startDraw} onTouchMove={draw} onTouchEnd={endDraw}
+              style={{maxWidth:'100%',height:'auto',borderRadius:8,cursor:tool==='eraser'?'cell':'crosshair',touchAction:'none',background:'#0a0a0a'}}
+            />
+          </div>
+          <div style={{display:'flex',gap:10,justifyContent:'flex-end'}}>
+            <button className="btn btn-secondary" onClick={onClose}>Отмена</button>
+            <button className="btn btn-primary" onClick={save}>Сохранить</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ===== STORE ===== */
+function StoreModal({open,onClose,user,profile}){
+  const confirm=useConfirm();
+  const [mainTab,setMainTab]=useState('store');
+  const [storeCat,setStoreCat]=useState('frames');
+  const [workshopCat,setWorkshopCat]=useState('frames');
+  const [previewFrame,setPreviewFrame]=useState(profile?.equippedFrame||null);
+  const [previewBg,setPreviewBg]=useState(profile?.equippedBackground||null);
+  const [myBackgrounds,setMyBackgrounds]=useState([]);
+  const [showBgEditor,setShowBgEditor]=useState(false);
+  const inv=u.toArr(profile?.inventory);
+  useEffect(()=>{
+    if(!open||!user)return;
+    const r=db.ref(`users/${user.uid}/myBackgrounds`);
+    const h=r.on('value',s=>setMyBackgrounds(Object.entries(s.val()||{}).map(([id,v])=>({id,...v}))));
+    return()=>r.off('value',h);
+  },[open,user]);
+  const purchase=async item=>{
+    if(inv.some(i=>i.id===item.id))return u.toast('Уже куплено');
+    if((profile.gems||0)<item.price)return u.toast('Мало алмазов');
+    const ok=await confirm({title:'Купить?',message:`${item.name} за ${item.price} 💎`,confirmText:'Купить'});
+    if(!ok)return;
+    await db.ref(`users/${user.uid}/inventory`).set([...inv,{...item,purchasedAt:Date.now()}]);
+    await db.ref(`users/${user.uid}/gems`).set((profile.gems||0)-item.price);
+    u.toast('Куплено');
+  };
+  const equipFrame=async frame=>{await db.ref(`users/${user.uid}/equippedFrame`).set(frame);setPreviewFrame(frame);u.toast('Рамка надета');};
+  const equipBg=async bg=>{await db.ref(`users/${user.uid}/equippedBackground`).set(bg);setPreviewBg(bg);u.toast('Фон надет');};
+  const openDrawBg=async()=>{
+    if((profile.gems||0)<250)return u.toast('Мало алмазов (нужно 250)');
+    const ok=await confirm({title:'Открыть редактор?',message:'Спишется 250 💎 за создание своего фона.',confirmText:'Открыть'});
+    if(!ok)return;
+    await db.ref(`users/${user.uid}/gems`).set((profile.gems||0)-250);
+    setShowBgEditor(true);
+  };
+  const onSaveBgEditor=async(dataUrl)=>{const bgId=`bg_${Date.now().toString(36)}`;await db.ref(`users/${user.uid}/myBackgrounds/${bgId}`).set({id:bgId,image:dataUrl,name:'Мой фон',createdAt:Date.now(),type:'drawn'});u.toast('Фон сохранён!');};
+  const purchaseUploadBg=async e=>{
+    const f=e.target.files?.[0];if(!f)return;
+    if((profile.gems||0)<750)return u.toast('Мало алмазов (нужно 750)');
+    const ok=await confirm({title:'Загрузить фон?',message:'Спишется 750 💎.',confirmText:'Купить'});
+    if(!ok)return;
+    const r=new FileReader();
+    r.onloadend=async()=>{const bgId=`bg_${Date.now().toString(36)}`;await db.ref(`users/${user.uid}/myBackgrounds/${bgId}`).set({id:bgId,image:r.result,name:f.name,createdAt:Date.now(),type:'uploaded'});await db.ref(`users/${user.uid}/gems`).set((profile.gems||0)-750);u.toast('Фон загружен!');};
+    r.readAsDataURL(f);e.target.value='';
+  };
+  const deleteMyBg=async id=>{const ok=await confirm({title:'Удалить фон?',danger:true,confirmText:'Да'});if(!ok)return;await db.ref(`users/${user.uid}/myBackgrounds/${id}`).remove();u.toast('Удалён');};
+  const allItems=storeCat==='frames'?FRAMES:BACKGROUNDS;
+  return(
+    <>
+    <Mdl open={open} onClose={onClose} title="Магазин" maxWidth={720}>
+      <div className="tabs" style={{marginBottom:20}}>
+        <button className={`tab ${mainTab==='store'?'on':''}`} onClick={()=>setMainTab('store')}>Nexic Store</button>
+        <button className={`tab ${mainTab==='workshop'?'on':''}`} onClick={()=>setMainTab('workshop')}>Мастерская</button>
+      </div>
+      {mainTab==='store'&&(<>
+        <div className="tabs" style={{marginBottom:20}}>
+          <button className={`tab ${storeCat==='frames'?'on':''}`} onClick={()=>setStoreCat('frames')}>Рамки</button>
+          <button className={`tab ${storeCat==='backgrounds'?'on':''}`} onClick={()=>setStoreCat('backgrounds')}>Фоны</button>
+        </div>
+        <div className="grid">
+          {allItems.map(item=>{
+            const owned=inv.some(i=>i.id===item.id);
+            return(
+              <div key={item.id} className="grid-item">
+                {owned&&<div className="grid-item-badge">Куплено</div>}
+                <img src={item.image} alt="" className="grid-item-img"/>
+                <div className="grid-item-name">{item.name}</div>
+                <div className="grid-item-price"><Diamond/>{item.price}</div>
+                {!owned&&<button className="btn btn-primary btn-xs f1" style={{marginTop:8}} onClick={()=>purchase(item)}>Купить</button>}
+              </div>
+            );
+          })}
+        </div>
+      </>)}
+      {mainTab==='workshop'&&(<>
+        <div className="tabs" style={{marginBottom:20}}>
+          <button className={`tab ${workshopCat==='frames'?'on':''}`} onClick={()=>setWorkshopCat('frames')}>Рамки</button>
+          <button className={`tab ${workshopCat==='backgrounds'?'on':''}`} onClick={()=>setWorkshopCat('backgrounds')}>Фоны</button>
+          <button className={`tab ${workshopCat==='my'?'on':''}`} onClick={()=>setWorkshopCat('my')}>Мои фоны</button>
+        </div>
+        <div style={{marginBottom:20,padding:20,background:'var(--bg-elev-1)',borderRadius:'var(--r-lg)',textAlign:'center',position:'relative',overflow:'hidden'}}>
+          {previewBg?.image&&<div style={{position:'absolute',inset:0,backgroundImage:`url(${previewBg.image})`,backgroundSize:'cover',backgroundPosition:'center',opacity:.3}}/>}
+          <div style={{position:'relative',zIndex:1}}>
+            <AvSquare src={profile.avatar} size={100} frame={previewFrame} username={profile.username}/>
+            <div style={{fontWeight:700,fontSize:18,marginTop:12}}>{profile.username}</div>
+            <div style={{fontSize:13,color:'var(--t-lo)',marginTop:4}}>@{profile.user}</div>
+          </div>
+        </div>
+        {workshopCat==='frames'&&(<div className="grid">
+          {[...FRAMES,...u.toArr(profile?.inventory).filter(i=>i.type==='frame')].map((item,idx)=>{
+            const owned=inv.some(i=>i.id===item.id);
+            const isEquipped=previewFrame?.id===item.id;
+            return(
+              <div key={item.id+idx} className="grid-item" style={{border:isEquipped?'2px solid var(--accent)':'1px solid var(--glass-border)'}}>
+                <img src={item.image} alt="" className="grid-item-img"/>
+                <div className="grid-item-name">{item.name}</div>
+                {owned?(<button className={`btn ${isEquipped?'btn-success':'btn-primary'} btn-xs f1`} style={{marginTop:8}} onClick={()=>equipFrame(isEquipped?null:item)}>{isEquipped?'Снять':'Надеть'}</button>):(<div style={{fontSize:11,color:'var(--t-faint)',marginTop:8}}>Не куплено</div>)}
+              </div>
+            );
+          })}
+        </div>)}
+        {workshopCat==='backgrounds'&&(<div className="grid">
+          {[...BACKGROUNDS,...u.toArr(profile?.inventory).filter(i=>i.type==='background')].map((item,idx)=>{
+            const owned=inv.some(i=>i.id===item.id);
+            const isEquipped=previewBg?.id===item.id;
+            return(
+              <div key={item.id+idx} className="grid-item" style={{border:isEquipped?'2px solid var(--accent)':'1px solid var(--glass-border)'}}>
+                <img src={item.image} alt="" className="grid-item-img"/>
+                <div className="grid-item-name">{item.name}</div>
+                {owned?(<button className={`btn ${isEquipped?'btn-success':'btn-primary'} btn-xs f1`} style={{marginTop:8}} onClick={()=>equipBg(isEquipped?null:item)}>{isEquipped?'Снять':'Надеть'}</button>):(<div style={{fontSize:11,color:'var(--t-faint)',marginTop:8}}>Не куплено</div>)}
+              </div>
+            );
+          })}
+        </div>)}
+        {workshopCat==='my'&&(<div>
+          <div style={{display:'flex',gap:10,marginBottom:16}}>
+            <button className="btn btn-primary f1" onClick={openDrawBg}><Icon name="brush" size={18}/> Нарисовать фон (250💎)</button>
+            <label className="btn btn-secondary f1" style={{cursor:'pointer',justifyContent:'center'}}><Icon name="upload" size={18}/> Загрузить фон (750💎)<input type="file" accept="image/*" hidden onChange={purchaseUploadBg}/></label>
+          </div>
+          {myBackgrounds.length===0?(
+            <div style={{textAlign:'center',padding:30,color:'var(--t-faint)'}}>Нет своих фонов</div>
+          ):(
+            <div className="grid">
+              {myBackgrounds.map(bg=>{
+                const isEquipped=previewBg?.id===bg.id;
+                return(
+                  <div key={bg.id} className="grid-item" style={{border:isEquipped?'2px solid var(--accent)':'1px solid var(--glass-border)'}}>
+                    <img src={bg.image} alt="" className="grid-item-img"/>
+                    <div className="grid-item-name">{bg.name||'Мой фон'}</div>
+                    <button className={`btn ${isEquipped?'btn-success':'btn-primary'} btn-xs f1`} style={{marginTop:8}} onClick={()=>equipBg(isEquipped?null:bg)}>{isEquipped?'Снять':'Надеть'}</button>
+                    <button className="btn btn-danger btn-xs f1" style={{marginTop:4}} onClick={()=>deleteMyBg(bg.id)}>Удалить</button>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>)}
+      </>)}
+    </Mdl>
+    <BgEditor open={showBgEditor} onClose={()=>setShowBgEditor(false)} onSave={onSaveBgEditor}/>
+    </>
+  );
+}
+
+/* ===== CREATE / JOIN ===== */
+function CreateModal({open,onClose,onCreated}){
+  if(!open)return null;
+  return(
+    <Mdl open={open} onClose={onClose} title="Что создать?" maxWidth={480}>
+      <div className="channel-type-option" onClick={()=>{onClose();onCreated('group');}}>
+        <div className="channel-type-radio"/>
+        <div><div className="channel-type-title"><Icon name="group" size={18} style={{verticalAlign:'middle',marginRight:6}}/>Группа</div><div className="channel-type-desc">Общение участников, роли, права.</div></div>
+      </div>
+      <div className="channel-type-option" onClick={()=>{onClose();onCreated('channel');}}>
+        <div className="channel-type-radio"/>
+        <div><div className="channel-type-title"><Icon name="campaign" size={18} style={{verticalAlign:'middle',marginRight:6}}/>Канал</div><div className="channel-type-desc">Публикации, подписчики.</div></div>
+      </div>
+    </Mdl>
+  );
+}
+function JoinGroupModal({open,onClose,user,profile,onJoined}){
+  const [key,setKey]=useState('');
+  const [status,setStatus]=useState(null);
+  const go=async()=>{
+    if(!key.trim())return;
+    try{
+      const grp=await grpSvc.findByJoinKey(key.trim());
+      if(!grp){setStatus({ok:false,msg:'Ключ не найден'});return;}
+      if(grp.members?.[user.uid]){setStatus({ok:false,msg:'Уже в группе'});return;}
+      await grpSvc.join(grp.id,user.uid,{username:profile.username,avatar:profile.avatar});
+      setStatus({ok:true,msg:`Вступили в ${grp.name}`});
+      onJoined?.(grp.id);
+      setTimeout(onClose,700);
+    }catch(e){setStatus({ok:false,msg:e.message});}
+  };
+  return(
+    <Mdl open={open} onClose={onClose} title="Вступить по ключу">
+      <input className="input-field" placeholder="Ключ" value={key} onChange={e=>setKey(e.target.value)} style={{fontFamily:'monospace'}}/>
+      {status&&<div style={{marginTop:12,padding:12,borderRadius:'var(--r-md)',background:status.ok?'var(--success-soft)':'var(--danger-soft)',color:status.ok?'var(--success)':'var(--danger)',fontSize:13}}>{status.msg}</div>}
+      <button className="btn btn-primary btn-full" style={{marginTop:14}} onClick={go}>Вступить</button>
+    </Mdl>
+  );
+}
+function FrozenScreen({profile}){
+  return(
+    <div className="frozen-overlay">
+      <div className="frozen-card">
+        <div className="frozen-icon">❄️</div>
+        <div className="frozen-title">Вы временно заморожены</div>
+        <div className="frozen-reason">Причина: {profile.freezeReason||'Не указана'}</div>
+        {profile.badges?.SCAM&&<div className="frozen-badge"><Icon name="warning" size={16}/> Значок SCAM выдан</div>}
+        <div style={{marginTop:16,color:'var(--t-lo)',fontSize:13}}>Заморозка действует 7 дней с момента выдачи.</div>
+      </div>
+    </div>
+  );
+}
+
+/* ===== APP ===== */
+function App(){
+  const {user,profile,loading}=useAuth();
+  const {friends,online}=useFriends(user?.uid);
+  const {incoming}=useRequests(user?.uid);
+  const groups=useGroups(user?.uid);
+  const [activeChat,setActiveChat]=useState(null);
+  const [modal,setModal]=useState(null);
+  const [profileView,setProfileView]=useState(null);
+  const [channelProfile,setChannelProfile]=useState(null);
+  const [imageViewer,setImageViewer]=useState(null);
+  const [createChoice,setCreateChoice]=useState(null);
+  const [blockedUids,setBlockedUids]=useState([]);
+  useEffect(()=>{
+    if(!user)return;
+    const r=db.ref(`blocks/${user.uid}`);
+    const h=r.on('value',s=>setBlockedUids(Object.keys(s.val()||{})));
+    return()=>r.off('value',h);
+  },[user]);
+  const chat=useMemo(()=>{
+    if(!activeChat)return null;
+    if(activeChat.startsWith('group_')){
+      const g=groups.find(g=>g.id===activeChat);
+      if(!g)return null;
+      return{id:g.id,type:g.isChannel?'channel':'group',name:g.name,avatar:g.avatar,uid:g.id};
+    }
+    const f=friends.find(f=>f.uid===activeChat);
+    return f?{id:f.uid,type:'direct',name:f.username,avatar:f.avatar,uid:f.uid}:null;
+  },[activeChat,friends,groups]);
+  const currentGroup=chat&&chat.type==='group'?groups.find(g=>g.id===chat.id):null;
+  const currentChannel=chat&&chat.type==='channel'?groups.find(g=>g.id===chat.id):null;
+  const frozen=u.isFrozen(profile);
+  if(loading)return<div style={{height:'100vh',display:'flex',alignItems:'center',justifyContent:'center'}}><div className="spinner"/></div>;
+  if(!user||!profile)return<ConfirmProvider><AuthScreen/></ConfirmProvider>;
+  if(frozen)return<ConfirmProvider><FrozenScreen profile={profile}/></ConfirmProvider>;
+  const isMobile=window.innerWidth<=768;
+  const isSubscribedToChannel=currentChannel&&currentChannel.members&&currentChannel.members[user.uid];
+  const handleBlock=async()=>{
+    if(!profileView)return;
+    if(blockedUids.includes(profileView)){await frSvc.unblock(user.uid,profileView);u.toast('Разблокирован');}
+    else{await frSvc.block(user.uid,profileView);u.toast('Заблокирован');}
+  };
+  return(
+    <ConfirmProvider>
+      <div className="app">
+        <div className="sidebar">
+          <ChatList user={user} profile={profile} friends={friends} online={online} groups={groups} activeChat={activeChat} onSelect={c=>{setActiveChat(c.id);setProfileView(null);setChannelProfile(null);}} onCreateGroup={()=>setCreateChoice('choice')} onOpenFriends={()=>setModal('friends')} onJoinGroup={()=>setModal('joinGroup')} onOpenStore={()=>setModal('store')} onOpenSettings={()=>setModal('settings')} onOpenAdmin={()=>setModal('admin')} onOpenStickers={()=>setModal('stickers')} reqCount={incoming.length}/>
+        </div>
+        <div className="main">
+          {profileView?(
+            <ProfileView user={user} profile={profile} targetUid={profileView} isOwn={profileView===user.uid} onClose={()=>setProfileView(null)} onWrite={uid=>{setActiveChat(uid);setProfileView(null);}} onBlock={handleBlock} isBlocked={blockedUids.includes(profileView)}/>
+          ):channelProfile?(
+            <ChannelProfileView channel={channelProfile} user={user} profile={profile} isAdmin={isAdminOf(channelProfile,user.uid)} onClose={()=>setChannelProfile(null)} onOpenSettings={()=>setModal('channelSettings')} isSubscribed={isSubscribedToChannel} onJoin={async()=>{await grpSvc.join(channelProfile.id,user.uid,{username:profile.username,avatar:profile.avatar});u.toast('Подписались');setChannelProfile(null);}} onLeave={async()=>{await grpSvc.leave(channelProfile.id,user.uid);u.toast('Покинули');setChannelProfile(null);}}/>
+          ):chat?(
+            <ChatView chat={chat} user={user} profile={profile} friends={friends} online={online} blockedUids={blockedUids} onBack={()=>{setActiveChat(null);setProfileView(null);}} onOpenProfile={uid=>{setProfileView(uid);setActiveChat(null);}} onOpenGroupSettings={()=>setModal('groupSettings')} onOpenChannelSettings={()=>setModal('channelSettings')} onOpenChannelProfile={()=>{const g=groups.find(x=>x.id===chat.id);if(g)setChannelProfile(g);}} onOpenImage={setImageViewer}/>
+          ):(
+            <div className="empty"><Icon name="forum" size={80}/><div className="empty-title">Выберите чат</div></div>
+          )}
+        </div>
+        <CreateModal open={createChoice==='choice'} onClose={()=>setCreateChoice(null)} onCreated={(choice)=>{setCreateChoice(null);if(choice==='group')setModal('createGroup');else setModal('createChannel');}}/>
+        <FriendsModal open={modal==='friends'} onClose={()=>setModal(null)} user={user} profile={profile} friends={friends} incoming={incoming} online={online} onOpenProfile={uid=>{setProfileView(uid);setActiveChat(null);}} onWrite={uid=>setActiveChat(uid)}/>
+        <CreateGroupModal open={modal==='createGroup'} onClose={()=>setModal(null)} user={user} onCreated={setActiveChat}/>
+        <ChannelCreateModal open={modal==='createChannel'} onClose={()=>setModal(null)} user={user} onCreated={setActiveChat}/>
+        <JoinGroupModal open={modal==='joinGroup'} onClose={()=>setModal(null)} user={user} profile={profile} onJoined={setActiveChat}/>
+        <SettingsModal open={modal==='settings'} onClose={()=>setModal(null)} user={user} profile={profile}/>
+        <StoreModal open={modal==='store'} onClose={()=>setModal(null)} user={user} profile={profile}/>
+        <StickerPacksModal open={modal==='stickers'} onClose={()=>setModal(null)} user={user}/>
+        {currentGroup&&<GroupSettingsModal open={modal==='groupSettings'} onClose={()=>setModal(null)} group={currentGroup} user={user} profile={profile} allFriends={friends} onDeleted={()=>setActiveChat(null)} onLeft={()=>setActiveChat(null)}/>}
+        {currentChannel&&<ChannelSettingsModal open={modal==='channelSettings'} onClose={()=>setModal(null)} channel={currentChannel} user={user} profile={profile} allFriends={friends} onDeleted={()=>setActiveChat(null)} onLeft={()=>setActiveChat(null)}/>}
+        {userSvc.isAdmin(profile)&&<AdminPanelModal open={modal==='admin'} onClose={()=>setModal(null)} user={user} profile={profile}/>}
+        <ImageViewer src={imageViewer} onClose={()=>setImageViewer(null)}/>
+        {isMobile&&(<div className="mobile-nav">
+          <button className="mobile-nav-item on" onClick={()=>{setActiveChat(null);setProfileView(null);setChannelProfile(null);}}><Icon name="chat"/>Чаты</button>
+          <button className="mobile-nav-item" onClick={()=>setModal('friends')}><Icon name="group"/>Друзья{incoming.length>0&&<span className="badge">{incoming.length}</span>}</button>
+          <button className="mobile-nav-item" onClick={()=>setModal('store')}><Icon name="storefront"/>Магазин</button>
+          <button className="mobile-nav-item" onClick={()=>setModal('settings')}><Icon name="person"/>Профиль</button>
+        </div>)}
+      </div>
+    </ConfirmProvider>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>
